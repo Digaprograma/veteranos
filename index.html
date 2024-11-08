@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veteranos Gremio Mineiro</title>
+</head>
+<body>
+    <html><head><base href="/" />
+        <title>VETERANOS GRÊMIO MINEIRO</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+                background-image: url('/a/cedacf37-2ee3-4d48-a660-073a0770c4cc');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }
+            .tab-content {
+                background: rgba(203, 230, 255, 0.9);
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                margin-top: 10px;
+            }
+            .nav-tabs {
+                position: sticky;
+                top: 0;
+                background: rgba(203, 230, 255, 0.9); /* Light blue background */
+                z-index: 1000;
+                padding-top: 10px;
+                border-bottom: 1px solid #dee2e6;
+            }
+            .nav-tabs .nav-link {
+                color: #495057;
+                font-weight: 500;
+                background-color: rgba(255, 255, 255, 0.8); /* Light white background for inactive tabs */
+                margin-right: 2px; /* Small spacing between tabs */
+                border: 1px solid #dee2e6;
+            }
+            .nav-tabs .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.95); /* Slightly whiter on hover */
+                border: 1px solid #dee2e6;
+            }
+            .nav-tabs .nav-link.active {
+                background-color: #009C3B;
+                color: white;
+                font-weight: 600;
+                border: 1px solid #009C3B;
+            }
+            #classification {
+                padding: 20px;
+                border-radius: 8px;
+            }
+            #classification .table {
+                background-color: rgba(255, 255, 255, 0.9);
+                margin-bottom: 20px;
+            }
+            #classification .mt-3 {
+                background-color: rgba(255, 255, 255, 0.9);
+                padding: 15px;
+                border-radius: 8px;
+            }
+            .match-card,
+            .match-editor {
+                background: rgba(255, 255, 255, 0.9);
+                margin-bottom: 15px;
+                border-radius: 8px;
+                border: 1px solid #ddd;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                padding: 15px;
+            }
+            .table {
+                width: 100%;
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            th, td {
+                padding: 10px;
+                text-align: center;
+            }
+            .table thead th {
+                background-color: #009C3B;
+                color: white;
+                border-bottom: none;
+            }
+            .score-input {
+                width: 60px;
+                text-align: center;
+            }
+            .cards-input {
+                width: 60px;
+                text-align: center;
+                padding: 4px;
+                font-size: 16px;
+            }
+            .time {
+                color: #009C3B;
+                font-weight: 500;
+                font-size: 0.95em;
+            }
+            .match-teams {
+                flex-grow: 1;
+                text-align: center;
+            }
+            .cards {
+                color: #495057;
+                font-weight: 500;
+            }
+            .btn-primary {
+                background-color: #009C3B;
+                border-color: #009C3B;
+            }
+            .btn-primary:hover {
+                background-color: #007C2B;
+                border-color: #007C2B;
+            }
+            .btn-success {
+                background-color: #009C3B;
+                border-color: #009C3B;
+            }
+            .btn-success:hover {
+                background-color: #007C2B;
+                border-color: #007C2B;
+            }
+            .btn-warning {
+                color: #000;
+                background-color: #ffc107;
+                border-color: #ffc107;
+            }
+            .btn-danger {
+                background-color: #dc3545;
+                border-color: #dc3545;
+            }
+            h1, h3, h4 {
+                color: #009C3B;
+            }
+            #classification h3 {
+                color: #009C3B;
+                text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+                margin-bottom: 20px;
+            }
+            .form-control,
+            .team-input textarea {
+                background: white;
+                border: 1px solid #ddd;
+            }
+            .team-input {
+                background: rgba(255, 255, 255, 0.9);
+                padding: 15px;
+                margin-bottom: 15px;
+                border-radius: 8px;
+            }
+            #adminPanel .form-control,
+            #adminPanel .form-select {
+                background-color: white;
+                border: 1px solid #ddd;
+            }
+            .match-card:hover,
+            .match-editor:hover {
+                background: rgba(255, 255, 255, 1);
+                transition: background 0.3s ease;
+            }
+            .match-editor .d-flex.justify-content-center.align-items-center.mt-2 {
+                margin: 15px 0;
+            }
+            .photo-card {
+                position: relative;
+                margin-bottom: 20px;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                background: rgba(255, 255, 255, 0.9);
+            }
+            .photo-card img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+            .photo-card img:hover {
+                transform: scale(1.05);
+            }
+            .photo-viewer-modal .modal-dialog {
+                max-width: 90vw;
+                margin: 20px auto;
+            }
+            .photo-viewer-modal .modal-content {
+                background: rgba(0, 0, 0, 0.9);
+                border: none;
+            }
+            .photo-viewer-modal .modal-header {
+                border: none;
+                padding: 1rem;
+            }
+            .photo-viewer-modal .btn-close {
+                filter: invert(1);
+            }
+            .modal-photo {
+                max-width: 100%;
+                height: auto;
+            }
+            .delete-btn {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                opacity: 0.8;
+                transition: opacity 0.2s;
+            }
+            .delete-btn:hover {
+                opacity: 1;
+            }
+            @media (max-width: 768px) {
+                body {
+                    padding: 10px;
+                }
+                
+                .container {
+                    padding: 0;
+                }
+                
+                .tab-content {
+                    padding: 10px;
+                }
+                
+                .nav-tabs {
+                    padding-top: 5px;
+                }
+                
+                .nav-tabs .nav-item {
+                    width: 50%;
+                }
+                
+                .nav-tabs .nav-link {
+                    padding: 8px;
+                    font-size: 14px;
+                }
+                
+                .match-card,
+                .match-editor {
+                    padding: 10px;
+                }
+                
+                .match-card .d-flex {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 10px;
+                }
+                
+                .time {
+                    width: 100%;
+                }
+                
+                .match-teams {
+                    width: 100%;
+                }
+                
+                .cards {
+                    width: 100%;
+                }
+                
+                .match-editor .row {
+                    margin: 0;
+                }
+                
+                .match-editor .col-md-3,
+                .match-editor .col-md-7 {
+                    padding: 5px;
+                }
+                
+                .match-editor .d-flex {
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    gap: 10px;
+                }
+                
+                .score-input,
+                .cards-input {
+                    width: 50px;
+                }
+                
+                .table-responsive {
+                    display: block;
+                    width: 100%;
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+                
+                .team-input {
+                    margin: 10px 0;
+                }
+                
+                #adminPanel .btn {
+                    margin: 5px;
+                    width: 100%;
+                }
+                
+                .photo-card {
+                    margin-bottom: 15px;
+                }
+                
+                .photo-card img {
+                    height: 150px;
+                }
+            }
+            .accordion-button:not(.collapsed) {
+                background-color: #009C3B;
+                color: white;
+            }
+            .accordion-button:focus {
+                border-color: #009C3B;
+                box-shadow: 0 0 0 0.25rem rgba(0, 156, 59, 0.25);
+            }
+            .accordion-button::after {
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23009C3B'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+            }
+            .accordion-button:not(.collapsed)::after {
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+            }
+            .accordion-body {
+                background-color: rgba(255, 255, 255, 0.9);
+            }
+        </style>
+        </head>
+        <body>
+        
+        <div class="container">
+            <h1 class="text-center mb-4">VETERANOS GRÊMIO MINEIRO</h1>
+        
+            <ul class="nav nav-tabs" id="mainTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#classification">Classificação</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#matches">Confrontos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#statute">Estatuto</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#stats">Estatísticas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#gallery">Galeria</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#admin">Administrador</a>
+                </li>
+            </ul>
+        
+            <div class="tab-content">
+                <div id="classification" class="tab-pane active">
+                    <h3>Classificação</h3>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Equipe</th>
+                                    <th>PG</th>
+                                    <th>J</th>
+                                    <th>V</th>
+                                    <th>E</th>
+                                    <th>D</th>
+                                    <th>CA</th>
+                                    <th>CV</th>
+                                </tr>
+                            </thead>
+                            <tbody id="classificationTable">
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <h5>Legenda:</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>PG</strong> - Pontos Ganhos</li>
+                            <li><strong>J</strong> - Jogos</li>
+                            <li><strong>V</strong> - Vitórias</li>
+                            <li><strong>E</strong> - Empates</li>
+                            <li><strong>D</strong> - Derrotas</li>
+                            <li><strong>CA</strong> - Cartões Amarelos</li>
+                            <li><strong>CV</strong> - Cartões Vermelhos</li>
+                        </ul>
+                    </div>
+                </div>
+        
+                <div id="matches" class="tab-pane fade">
+                    <h3>Confrontos</h3>
+                    <div id="matchSchedule"></div>
+                </div>
+        
+                <div id="stats" class="tab-pane fade">
+                    <h3>Estatísticas dos Jogadores</h3>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h4>Artilheiros</h4>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Jogador</th>
+                                            <th>Equipe</th>
+                                            <th>Gols</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="scorersTable">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h4>Cartões</h4>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Jogador</th>
+                                            <th>Equipe</th>
+                                            <th>CA</th>
+                                            <th>CV</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cardsTable">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div id="gallery" class="tab-pane fade">
+                    <h3>Galeria de Fotos</h3>
+                    <div id="photoGrid" class="row g-3">
+                        <!-- Photos will be dynamically inserted here -->
+                    </div>
+                </div>
+        
+                <div id="admin" class="tab-pane fade">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3>Área Administrativa</h3>
+                        <button onclick="logout()" class="btn btn-outline-danger" id="logoutBtn" style="display: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+                                <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                            </svg>
+                            Sair
+                        </button>
+                    </div>
+                    <div id="loginForm">
+                        <input type="password" id="adminPassword" class="form-control mb-2" placeholder="Senha">
+                        <button onclick="checkPassword()" class="btn btn-primary">Entrar</button>
+                    </div>
+                    <div id="adminPanel" style="display: none;">
+                        <div class="accordion" id="adminAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#matchesCollapse">
+                                        Gerenciar Confrontos
+                                    </button>
+                                </h2>
+                                <div id="matchesCollapse" class="accordion-collapse collapse show" data-bs-parent="#adminAccordion">
+                                    <div class="accordion-body">
+                                        <div id="matchEditor"></div>
+                                        <button onclick="saveMatches()" class="btn btn-success mt-3">Salvar Resultados</button>
+                                        <button onclick="resetChampionship()" class="btn btn-danger mt-3 ms-2">Reiniciar Campeonato</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#teamsCollapse">
+                                        Times
+                                    </button>
+                                </h2>
+                                <div id="teamsCollapse" class="accordion-collapse collapse" data-bs-parent="#adminAccordion">
+                                    <div class="accordion-body">
+                                        <div class="team-input">
+                                            <h4>Itália</h4>
+                                            <textarea class="form-control" id="italyPlayers" rows="5"></textarea>
+                                        </div>
+                                        <div class="team-input">
+                                            <h4>Portugal</h4>
+                                            <textarea class="form-control" id="portugalPlayers" rows="5"></textarea>
+                                        </div>
+                                        <div class="team-input">
+                                            <h4>Holanda</h4>
+                                            <textarea class="form-control" id="hollandPlayers" rows="5"></textarea>
+                                        </div>
+                                        <div class="team-input">
+                                            <h4>Espanha</h4>
+                                            <textarea class="form-control" id="spainPlayers" rows="5"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#galleryCollapse">
+                                        Gerenciar Galeria
+                                    </button>
+                                </h2>
+                                <div id="galleryCollapse" class="accordion-collapse collapse" data-bs-parent="#adminAccordion">
+                                    <div class="accordion-body">
+                                        <div class="gallery-upload-section">
+                                            <input type="file" id="photoUpload" accept=".jpg,.jpeg,.png,.gif,.JPG" multiple class="form-control mb-2">
+                                            <button onclick="uploadPhotos()" class="btn btn-success">
+                                                <i class="bi bi-upload"></i> Enviar Fotos
+                                            </button>
+                                        </div>
+                                        <div id="adminPhotoGrid" class="row g-3 mt-3">
+                                            <!-- Admin photo grid with delete buttons -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+        const teams = ['Itália', 'Portugal', 'Holanda', 'Espanha'];
+        let players = {
+            'Itália': [],
+            'Portugal': [],
+            'Holanda': [],
+            'Espanha': []
+        };
+        let matches = [];
+        let classification = teams.map(team => ({
+            name: team,
+            points: 0,
+            matches: 0,
+            victories: 0,
+            draws: 0,
+            defeats: 0,
+            yellowCards: 0,
+            redCards: 0
+        }));
+        let galleryPhotos = [];
+        
+        function generateMatches() {
+            matches = [];
+            for(let i = 0; i < teams.length; i++) {
+                for(let j = i + 1; j < teams.length; j++) {
+                    matches.push({
+                        team1: teams[i],
+                        team2: teams[j],
+                        score1: null,
+                        score2: null,
+                        yellowCards1: 0,
+                        yellowCards2: 0,
+                        redCards1: 0,
+                        redCards2: 0,
+                        date: null,
+                        scorers1: [],
+                        scorers2: [],
+                        cardsPlayers1: [],
+                        cardsPlayers2: []
+                    });
+                }
+            }
+            const firstRoundMatches = [...matches];
+            firstRoundMatches.forEach(match => {
+                matches.push({
+                    team1: match.team2,
+                    team2: match.team1,
+                    score1: null,
+                    score2: null,
+                    yellowCards1: 0,
+                    yellowCards2: 0,
+                    redCards1: 0,
+                    redCards2: 0,
+                    date: null,
+                    scorers1: [],
+                    scorers2: [],
+                    cardsPlayers1: [],
+                    cardsPlayers2: []
+                });
+            });
+            matches = alternateTeams(matches);
+            setMatchDates();
+            return matches;
+        }
+        
+        function alternateTeams(matches) {
+            let alternatedMatches = [];
+            let usedTeams = new Set();
+            let remainingMatches = [...matches];
+            
+            while (remainingMatches.length > 0) {
+                let matchIndex = remainingMatches.findIndex(match => 
+                    !usedTeams.has(match.team1) && !usedTeams.has(match.team2)
+                );
+                
+                if (matchIndex === -1) {
+                    usedTeams.clear();
+                    matchIndex = 0;
+                }
+                
+                let match = remainingMatches.splice(matchIndex, 1)[0];
+                alternatedMatches.push(match);
+                usedTeams.add(match.team1);
+                usedTeams.add(match.team2);
+                
+                if (usedTeams.size >= teams.length) {
+                    usedTeams.clear();
+                }
+            }
+            
+            return alternatedMatches;
+        }
+        
+        function setMatchDates() {
+            let currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() + (7 - currentDate.getDay()));
+            currentDate.setHours(9, 30, 0, 0);
+            
+            matches.forEach((match, index) => {
+                const matchNumber = index % 2; 
+                const matchTime = new Date(currentDate);
+                
+                if (matchNumber === 0) matchTime.setHours(9, 30, 0);
+                else if (matchNumber === 1) matchTime.setHours(10, 30, 0);
+                
+                match.date = new Date(matchTime);
+                
+                if (matchNumber === 1) { 
+                    currentDate.setDate(currentDate.getDate() + 7);
+                }
+            });
+        }
+        
+        function displayMatches() {
+            const matchSchedule = document.getElementById('matchSchedule');
+            matchSchedule.innerHTML = '';
+            
+            let currentDate = null;
+            
+            matches.sort((a, b) => new Date(a.date) - new Date(b.date))
+                .forEach(match => {
+                    const matchDate = new Date(match.date);
+                    const dateStr = matchDate.toLocaleDateString('pt-BR', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                    
+                    if (currentDate !== dateStr) {
+                        currentDate = dateStr;
+                        const dateHeader = document.createElement('h4');
+                        dateHeader.className = 'mt-4 mb-3';
+                        dateHeader.textContent = dateStr;
+                        matchSchedule.appendChild(dateHeader);
+                    }
+                    
+                    const matchCard = document.createElement('div');
+                    matchCard.className = 'match-card';
+        
+                    const time = matchDate.toLocaleTimeString('pt-BR', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+        
+                    let scoreDisplay = 'vs';
+                    if (match.score1 !== null && match.score2 !== null) {
+                        scoreDisplay = `${match.score1} x ${match.score2}`;
+                    }
+        
+                    matchCard.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="time">${time}</div>
+                            <div class="match-teams">
+                                <strong>${match.team1}</strong> 
+                                <span class="mx-2">${scoreDisplay}</span> 
+                                <strong>${match.team2}</strong>
+                            </div>
+                            <div class="cards">
+                                CA/CV: ${match.yellowCards1}/${match.redCards1} | ${match.yellowCards2}/${match.redCards2}
+                            </div>
+                        </div>
+                    `;
+                    
+                    matchSchedule.appendChild(matchCard);
+                });
+        }
+        
+        function displayMatchEditor() {
+            const matchEditor = document.getElementById('matchEditor');
+            matchEditor.innerHTML = `
+                <div class="accordion" id="adminAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#matchesCollapse">
+                                Gerenciar Confrontos
+                            </button>
+                        </h2>
+                        <div id="matchesCollapse" class="accordion-collapse collapse show" data-bs-parent="#adminAccordion">
+                            <div class="accordion-body">
+                                <div id="matchesList"></div>
+                                <button onclick="saveMatches()" class="btn btn-success mt-3">Salvar Resultados</button>
+                                <button onclick="resetChampionship()" class="btn btn-danger mt-3 ms-2">Reiniciar Campeonato</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#teamsCollapse">
+                                Times
+                            </button>
+                        </h2>
+                        <div id="teamsCollapse" class="accordion-collapse collapse" data-bs-parent="#adminAccordion">
+                            <div class="accordion-body">
+                                <div class="team-input">
+                                    <h4>Itália</h4>
+                                    <textarea class="form-control" id="italyPlayers" rows="5"></textarea>
+                                </div>
+                                <div class="team-input">
+                                    <h4>Portugal</h4>
+                                    <textarea class="form-control" id="portugalPlayers" rows="5"></textarea>
+                                </div>
+                                <div class="team-input">
+                                    <h4>Holanda</h4>
+                                    <textarea class="form-control" id="hollandPlayers" rows="5"></textarea>
+                                </div>
+                                <div class="team-input">
+                                    <h4>Espanha</h4>
+                                    <textarea class="form-control" id="spainPlayers" rows="5"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#galleryCollapse">
+                                Gerenciar Galeria
+                            </button>
+                        </h2>
+                        <div id="galleryCollapse" class="accordion-collapse collapse" data-bs-parent="#adminAccordion">
+                            <div class="accordion-body">
+                                <div class="gallery-upload-section">
+                                    <input type="file" id="photoUpload" accept=".jpg,.jpeg,.png,.gif,.JPG" multiple class="form-control mb-2">
+                                    <button onclick="uploadPhotos()" class="btn btn-success">
+                                        <i class="bi bi-upload"></i> Enviar Fotos
+                                    </button>
+                                </div>
+                                <div id="adminPhotoGrid" class="row g-3 mt-3">
+                                    <!-- Admin photo grid with delete buttons -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        
+            const matchesList = document.getElementById('matchesList');
+            matches.forEach((match, index) => {
+                const matchDiv = document.createElement('div');
+                matchDiv.className = 'match-editor';
+                matchDiv.innerHTML = `
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <input type="datetime-local" class="form-control" 
+                                   value="${match.date.toISOString().slice(0,16)}"
+                                   onchange="updateMatch(${index}, 'date', this.value)">
+                        </div>
+                        <div class="col-md-7">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <select class="form-select me-2" style="width: auto;" 
+                                        onchange="updateMatch(${index}, 'team1', this.value)">
+                                    ${teams.map(team => `
+                                        <option value="${team}" ${team === match.team1 ? 'selected' : ''}>
+                                            ${team}
+                                        </option>
+                                    `).join('')}
+                                </select>
+                                <input type="number" class="form-control score-input me-2" value="${match.score1 || ''}" 
+                                       onchange="updateMatch(${index}, 'score1', this.value)">
+                                <span class="mx-2">vs</span>
+                                <input type="number" class="form-control score-input ms-2" value="${match.score2 || ''}"
+                                       onchange="updateMatch(${index}, 'score2', this.value)">
+                                <select class="form-select ms-2" style="width: auto;"
+                                        onchange="updateMatch(${index}, 'team2', this.value)">
+                                    ${teams.map(team => `
+                                        <option value="${team}" ${team === match.team2 ? 'selected' : ''}>
+                                            ${team}
+                                        </option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center mt-2">
+                                <div class="me-2">
+                                    <div>CA:</div>
+                                    <div>CV:</div>
+                                </div>
+                                <div class="me-2">
+                                    <input type="number" class="form-control cards-input mb-1" value="${match.yellowCards1}"
+                                           onchange="updateMatch(${index}, 'yellowCards1', this.value)">
+                                    <input type="number" class="form-control cards-input" value="${match.redCards1}"
+                                           onchange="updateMatch(${index}, 'redCards1', this.value)">
+                                </div>
+                                <span class="mx-2">|</span>
+                                <div class="ms-2">
+                                    <input type="number" class="form-control cards-input mb-1" value="${match.yellowCards2}"
+                                           onchange="updateMatch(${index}, 'yellowCards2', this.value)">
+                                    <input type="number" class="form-control cards-input" value="${match.redCards2}"
+                                           onchange="updateMatch(${index}, 'redCards2', this.value)">
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <h6>${match.team1} - Gols</h6>
+                                    <div class="scorers-input" data-match="${index}" data-team="1">
+                                        <button class="btn btn-sm btn-primary" onclick="addScorer(${index}, '${match.team1}', 1)">
+                                            + Adicionar Gol
+                                        </button>
+                                        <div class="scorers-list1"></div>
+                                    </div>
+                                    <h6 class="mt-2">${match.team1} - Cartões</h6>
+                                    <div class="cards-input" data-match="${index}" data-team="1">
+                                        <button class="btn btn-sm btn-warning" onclick="addCard(${index}, '${match.team1}', 1, 'yellow')">
+                                            + Cartão Amarelo
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="addCard(${index}, '${match.team1}', 1, 'red')">
+                                            + Cartão Vermelho
+                                        </button>
+                                        <div class="cards-list1"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>${match.team2} - Gols</h6>
+                                    <div class="scorers-input" data-match="${index}" data-team="2">
+                                        <button class="btn btn-sm btn-primary" onclick="addScorer(${index}, '${match.team2}', 2)">
+                                            + Adicionar Gol
+                                        </button>
+                                        <div class="scorers-list2"></div>
+                                    </div>
+                                    <h6 class="mt-2">${match.team2} - Cartões</h6>
+                                    <div class="cards-input" data-match="${index}" data-team="2">
+                                        <button class="btn btn-sm btn-warning" onclick="addCard(${index}, '${match.team2}', 2, 'yellow')">
+                                            + Cartão Amarelo
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="addCard(${index}, '${match.team2}', 2, 'red')">
+                                            + Cartão Vermelho
+                                        </button>
+                                        <div class="cards-list2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                matchesList.appendChild(matchDiv);
+            });
+        }
+        
+        function updateMatch(matchIndex, field, value) {
+            if (field === 'date') {
+                matches[matchIndex].date = new Date(value);
+            } else if (field === 'team1' || field === 'team2') {
+                matches[matchIndex][field] = value;
+            } else {
+                matches[matchIndex][field] = parseInt(value) || 0;
+            }
+            updateClassification();
+            displayMatches();
+        }
+        
+        function uploadPhotos() {
+            const fileInput = document.getElementById('photoUpload');
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                alert('Por favor, selecione pelo menos uma foto para enviar.');
+                return;
+            }
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    galleryPhotos.push({
+                        id: Date.now(),
+                        url: e.target.result,
+                        date: new Date().toISOString()
+                    });
+                    updateGallery();
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            fileInput.value = '';
+        }
+        
+        function deletePhoto(photoId) {
+            if (confirm('Tem certeza que deseja excluir esta foto?')) {
+                galleryPhotos = galleryPhotos.filter(photo => photo.id !== photoId);
+                updateGallery();
+            }
+        }
+        
+        function updateGallery() {
+            const photoGrid = document.getElementById('photoGrid');
+            const adminPhotoGrid = document.getElementById('adminPhotoGrid');
+        
+            // Update public gallery
+            photoGrid.innerHTML = galleryPhotos.map(photo => `
+                <div class="col-md-4 col-sm-6">
+                    <div class="photo-card">
+                        <img src="${photo.url}" alt="Foto da galeria" onclick="showFullPhoto('${photo.url}')">
+                    </div>
+                </div>
+            `).join('');
+        
+            // Update admin gallery with delete buttons
+            adminPhotoGrid.innerHTML = galleryPhotos.map(photo => `
+                <div class="col-md-4 col-sm-6">
+                    <div class="photo-card">
+                        <img src="${photo.url}" alt="Foto da galeria" onclick="showFullPhoto('${photo.url}')">
+                        <button class="delete-btn" onclick="deletePhoto(${photo.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showFullPhoto(photoUrl) {
+            const modalHTML = `
+                <div class="modal fade photo-viewer-modal" id="photoViewerModal" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body text-center p-0">
+                                <img src="${photoUrl}" class="modal-photo" alt="Foto em tamanho completo">
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        
+            const existingModal = document.getElementById('photoViewerModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+        
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            const modal = new bootstrap.Modal(document.getElementById('photoViewerModal'));
+            modal.show();
+        }
+        
+        function addScorer(matchIndex, team, teamNumber) {
+            const modalHTML = `
+                <div class="modal fade" id="scorerModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Adicionar Gol - ${team}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Jogador</label>
+                                    <select class="form-select" id="playerSelect">
+                                        ${players[team].map(player => 
+                                            `<option value="${player}">${player}</option>`
+                                        ).join('')}
+                                        <option value="other">Outro Jogador...</option>
+                                    </select>
+                                    <input type="text" class="form-control mt-2" id="otherPlayer" 
+                                           placeholder="Nome do jogador" style="display: none;">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Número de Gols</label>
+                                    <input type="number" class="form-control" id="goalsInput" 
+                                           min="1" value="1">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="saveScorer">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        
+            const existingModal = document.getElementById('scorerModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+        
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+            const modal = new bootstrap.Modal(document.getElementById('scorerModal'));
+            const playerSelect = document.getElementById('playerSelect');
+            const otherPlayer = document.getElementById('otherPlayer');
+            const saveButton = document.getElementById('saveScorer');
+        
+            playerSelect.addEventListener('change', function() {
+                otherPlayer.style.display = this.value === 'other' ? 'block' : 'none';
+            });
+        
+            saveButton.addEventListener('click', function() {
+                const selectedPlayer = playerSelect.value === 'other' ? 
+                    otherPlayer.value : playerSelect.value;
+                const goals = parseInt(document.getElementById('goalsInput').value) || 1;
+        
+                if (!selectedPlayer) {
+                    alert('Por favor, selecione ou digite o nome do jogador');
+                    return;
+                }
+        
+                const scorersList = matches[matchIndex][`scorers${teamNumber}`];
+                const existingScorer = scorersList.find(s => s.name === selectedPlayer);
+                
+                if (existingScorer) {
+                    existingScorer.goals += goals;
+                } else {
+                    scorersList.push({name: selectedPlayer, goals: goals});
+                }
+                
+                updatePlayerStats();
+                displayMatchEditor();
+                modal.hide();
+            });
+        
+            modal.show();
+        }
+        
+        function addCard(matchIndex, team, teamNumber, cardType) {
+            const playerName = prompt("Nome do jogador:");
+            if (!playerName) return;
+            
+            const cardsList = matches[matchIndex][`cardsPlayers${teamNumber}`];
+            cardsList.push({
+                name: playerName,
+                yellow: cardType === 'yellow',
+                red: cardType === 'red'
+            });
+            
+            updatePlayerStats();
+            displayMatchEditor();
+        }
+        
+        function updatePlayerStats() {
+            const stats = {};
+            
+            matches.forEach(match => {
+                [1, 2].forEach(teamNum => {
+                    const team = teamNum === 1 ? match.team1 : match.team2;
+                    match[`scorers${teamNum}`].forEach(scorer => {
+                        if (!stats[scorer.name]) {
+                            stats[scorer.name] = {team, goals: 0, yellowCards: 0, redCards: 0};
+                        }
+                        stats[scorer.name].goals += scorer.goals;
+                    });
+                    
+                    match[`cardsPlayers${teamNum}`].forEach(card => {
+                        if (!stats[card.name]) {
+                            stats[card.name] = {team, goals: 0, yellowCards: 0, redCards: 0};
+                        }
+                        if (card.yellow) stats[card.name].yellowCards++;
+                        if (card.red) stats[card.name].redCards++;
+                    });
+                });
+            });
+            
+            const scorersTable = document.getElementById('scorersTable');
+            scorersTable.innerHTML = '';
+            Object.entries(stats)
+                .filter(([_, stat]) => stat.goals > 0)
+                .sort((a, b) => b[1].goals - a[1].goals)
+                .forEach(([name, stat]) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${name}</td>
+                        <td>${stat.team}</td>
+                        <td>${stat.goals}</td>
+                    `;
+                    scorersTable.appendChild(row);
+                });
+            
+            const cardsTable = document.getElementById('cardsTable');
+            cardsTable.innerHTML = '';
+            Object.entries(stats)
+                .filter(([_, stat]) => stat.yellowCards > 0 || stat.redCards > 0)
+                .sort((a, b) => (b[1].yellowCards + b[1].redCards*2) - (a[1].yellowCards + a[1].redCards*2))
+                .forEach(([name, stat]) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${name}</td>
+                        <td>${stat.team}</td>
+                        <td>${stat.yellowCards}</td>
+                        <td>${stat.redCards}</td>
+                    `;
+                    cardsTable.appendChild(row);
+                });
+        }
+        
+        function resetChampionship() {
+            if(confirm('Tem certeza que deseja reiniciar o campeonato? Todos os resultados serão perdidos.')) {
+                matches = generateMatches();
+                classification = teams.map(team => ({
+                    name: team,
+                    points: 0,
+                    matches: 0,
+                    victories: 0,
+                    draws: 0,
+                    defeats: 0,
+                    yellowCards: 0,
+                    redCards: 0
+                }));
+                updateClassification();
+                displayMatches();
+                displayMatchEditor();
+            }
+        }
+        
+        function saveMatches() {
+            updateClassification();
+            updatePlayerStats();
+            alert('Resultados salvos com sucesso!');
+        }
+        
+        function updateClassification() {
+            classification.forEach(team => {
+                team.points = 0;
+                team.matches = 0;
+                team.victories = 0;
+                team.draws = 0;
+                team.defeats = 0;
+                team.yellowCards = 0;
+                team.redCards = 0;
+            });
+        
+            matches.forEach(match => {
+                if (match.score1 !== null && match.score2 !== null) {
+                    const team1 = classification.find(t => t.name === match.team1);
+                    const team2 = classification.find(t => t.name === match.team2);
+        
+                    team1.matches++;
+                    team2.matches++;
+                    team1.yellowCards += match.yellowCards1;
+                    team1.redCards += match.redCards1;
+                    team2.yellowCards += match.yellowCards2;
+                    team2.redCards += match.redCards2;
+        
+                    if (match.score1 > match.score2) {
+                        team1.victories++;
+                        team2.defeats++;
+                        team1.points += 2;
+                    } else if (match.score2 > match.score1) {
+                        team2.victories++;
+                        team1.defeats++;
+                        team2.points += 2;
+                    } else {
+                        team1.draws++;
+                        team2.draws++;
+                        team1.points += 1;
+                        team2.points += 1;
+                    }
+                }
+            });
+        
+            classification.sort((a, b) => {
+                if (b.points !== a.points) {
+                    return b.points - a.points;
+                }
+                if (b.victories !== a.victories) {
+                    return b.victories - a.victories;
+                }
+                if (a.draws !== b.draws) {
+                    return a.draws - a.draws;
+                }
+                
+                const aGoalDiff = matches.reduce((diff, match) => {
+                    if (match.score1 !== null && match.score2 !== null) {
+                        if (match.team1 === a.name) return diff + (match.score1 - match.score2);
+                        if (match.team2 === a.name) return diff + (match.score2 - match.score1);
+                    }
+                    return diff;
+                }, 0);
+                
+                const bGoalDiff = matches.reduce((diff, match) => {
+                    if (match.score1 !== null && match.score2 !== null) {
+                        if (match.team1 === b.name) return diff + (match.score1 - match.score2);
+                        if (match.team2 === b.name) return diff + (match.score2 - match.score1);
+                    }
+                    return diff;
+                }, 0);
+                
+                if (bGoalDiff !== aGoalDiff) {
+                    return bGoalDiff - aGoalDiff;
+                }
+                
+                const aGoals = matches.reduce((goals, match) => {
+                    if (match.score1 !== null && match.score2 !== null) {
+                        if (match.team1 === a.name) return goals + match.score1;
+                        if (match.team2 === a.name) return goals + match.score2;
+                    }
+                    return goals;
+                }, 0);
+                
+                const bGoals = matches.reduce((goals, match) => {
+                    if (match.score1 !== null && match.score2 !== null) {
+                        if (match.team1 === b.name) return goals + match.score1;
+                        if (match.team2 === b.name) return goals + match.score2;
+                    }
+                    return goals;
+                }, 0);
+                
+                if (bGoals !== aGoals) {
+                    return bGoals - aGoals;
+                }
+                
+                if (b.redCards !== a.redCards) {
+                    return b.redCards - a.redCards;
+                }
+                
+                if (b.yellowCards !== a.yellowCards) {
+                    return b.yellowCards - a.yellowCards;
+                }
+                
+                return 0;
+            });
+        
+            const tableBody = document.getElementById('classificationTable');
+            tableBody.innerHTML = '';
+            
+            classification.forEach(team => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${team.name}</td>
+                    <td>${team.points}</td>
+                    <td>${team.matches}</td>
+                    <td>${team.victories}</td>
+                    <td>${team.draws}</td>
+                    <td>${team.defeats}</td>
+                    <td>${team.yellowCards}</td>
+                    <td>${team.redCards}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function checkPassword() {
+            const password = document.getElementById('adminPassword').value;
+            if(password === 'Gremio@') {
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'block';
+                displayMatchEditor();
+            } else {
+                alert('Senha incorreta!');
+            }
+        }
+        
+        function logout() {
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('adminPassword').value = '';
+        }
+        
+        // Initialize
+        matches = generateMatches();
+        updateClassification();
+        displayMatches();
+        </script>
+        </body></html>
+</body>
+</html>
