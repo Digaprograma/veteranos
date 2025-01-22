@@ -538,72 +538,92 @@
         display: none;
     }
 </style>
-<<script>
-    const GITHUB_API_URL = 'https://api.github.com/repos/USUARIO/REPOSITORIO/contents/dados.json'; // Substitua por seu repositório
-    const TOKEN = 'SEU_TOKEN_AQUI'; // Insira aqui o seu token do GitHub
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campeonato</title>
+    <script>
+        const GITHUB_API_URL = 'https://api.github.com/repos/Digaprograma/veteranos/Digaprograma/contents/dados.json'; // Substitua por seu repositório
+        const TOKEN = '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'; // Insira aqui o seu token do GitHub
 
-    // Função para carregar dados do GitHub
-    async function carregarDados() {
-        try {
-            const response = await fetch(GITHUB_API_URL, {
-                headers: {
-                    'Authorization': `Bearer ${TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-            const data = await response.json();
-            const conteudo = atob(data.content); // Decodifica o conteúdo base64
-            return JSON.parse(conteudo); // Retorna o JSON decodificado
-        } catch (error) {
-            console.error('Erro ao carregar dados:', error);
+        // Função para carregar dados do GitHub
+        async function carregarDados() {
+            try {
+                const response = await fetch(GITHUB_API_URL, {
+                    headers: {
+                        'Authorization': `Bearer ${TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                const data = await response.json();
+                const conteudo = atob(data.content); // Decodifica o conteúdo base64
+                return JSON.parse(conteudo); // Retorna o JSON decodificado
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                alert('Erro ao carregar dados!');
+            }
         }
-    }
 
-    // Função para salvar dados no GitHub
-    async function salvarDados(novosDados) {
-        try {
-            // Primeiro, obtenha o SHA do arquivo atual
-            const respostaAtual = await fetch(GITHUB_API_URL, {
-                headers: {
-                    'Authorization': `Bearer ${TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-            const dadoAtual = await respostaAtual.json();
-            const shaAtual = dadoAtual.sha;
+        // Função para salvar dados no GitHub
+        async function salvarDados(novosDados) {
+            try {
+                // Primeiro, obtenha o SHA do arquivo atual
+                const respostaAtual = await fetch(GITHUB_API_URL, {
+                    headers: {
+                        'Authorization': `Bearer ${TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                const dadoAtual = await respostaAtual.json();
+                const shaAtual = dadoAtual.sha;
 
-            // Converta os novos dados para base64
-            const conteudoAtualizado = btoa(JSON.stringify(novosDados, null, 2));
+                // Converta os novos dados para base64
+                const conteudoAtualizado = btoa(JSON.stringify(novosDados, null, 2));
 
-            // Salve o novo conteúdo no repositório
-            await fetch(GITHUB_API_URL, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: 'Atualizando dados via site',
-                    content: conteudoAtualizado,
-                    sha: shaAtual
-                })
-            });
-            alert('Dados salvos com sucesso!');
-        } catch (error) {
-            console.error('Erro ao salvar dados:', error);
+                // Salve o novo conteúdo no repositório
+                await fetch(GITHUB_API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Atualizando dados via site',
+                        content: conteudoAtualizado,
+                        sha: shaAtual
+                    })
+                });
+                alert('Dados salvos com sucesso!');
+                exibirDados(); // Atualiza a exibição dos dados após salvar
+            } catch (error) {
+                console.error('Erro ao salvar dados:', error);
+                alert('Erro ao salvar dados!');
+            }
         }
-    }
 
-    // Função para exibir os dados carregados
-    async function exibirDados() {
-        const dados = await carregarDados();
-        document.getElementById('dados').textContent = JSON.stringify(dados, null, 2);
-    }
+        // Função para exibir os dados carregados no elemento <pre>
+        async function exibirDados() {
+            const dados = await carregarDados();
+            if (dados) {
+                document.getElementById('dados').textContent = JSON.stringify(dados, null, 2); // Exibe os dados formatados
+            }
+        }
 
-    // Exibir os dados assim que a página carregar
-    window.onload = exibirDados;
-</script>
+        // Exibir os dados assim que a página carregar
+        window.onload = exibirDados;
+    </script>
+</head>
+<body>
+    <h1>Campeonato</h1>
+    <button onclick="exibirDados()">Carregar Dados</button>
+    <button onclick="salvarDados({ mensagem: 'Nova mensagem salva!' })">Salvar Dados</button>
+    <pre id="dados"></pre> <!-- Área para exibir os dados carregados -->
+</body>
+</html>
+
 
 <script>
 let currentTab = 'classification';
@@ -856,12 +876,14 @@ function displayAdminMatches() {
                 <h3>Gestão de Confrontos</h3>
                 <div>
 
-                 <body> <h1>Gravar Todas Alterações</h1> <button onclick="exibirDados()">Carregar Dados</button> <button onclick="salvarDados({ mensagem: 'Nova mensagem salva!' })">Salvar Dados</button> <pre id="dados"></pre> <!-- Área para exibir os dados carregados --> </body>
-
-
+                <body>
+    <h1>Gravar Todas as Alterações</h1>
+    <button onclick="exibirDados({ mensagem: 'Dados Gravados!' })">Carregar Dados</button>
+    <button onclick="salvarDados({ mensagem: 'Nova mensagem salva!' })">Salvar Dados</button>
+    <pre id="dados"></pre> <!-- Área para exibir os dados carregados -->
+</body>
 
                     <button class="reset-button" onclick="resetChampionship()">Reiniciar Campeonato</button>
-                
                 </div>
                 <div class="waiting-list-admin">
                     <h3>Lista de Espera</h3>
