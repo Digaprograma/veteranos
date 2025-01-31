@@ -538,88 +538,106 @@
         display: none;
     }
 </style>
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gravar Todas as Alterações</title>
-    <script>
-        const GITHUB_API_URL = 'https://api.github.com/repos/Digaprograma/veteranos/contents/dados.json'; // Substitua por seu repositório
-        const TOKEN = "hp_Y802bCH56QeLeLkeylyfOxtpdsUpnw3UBaRj"; // Insira aqui o seu token do GitHub
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>// Função para salvar dados no GitHub
+async function saveDataToGitHub(data) {
+    const token = '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 '; // Substitua pelo token que você gerou
+    const repo = 'Digaprograma/veteranos'; // Substitua pelo seu usuário e nome do repositório
+    const path = 'data.json'; // Nome do arquivo JSON
+    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
 
-        // Função para carregar dados do GitHub
-        async function carregarDados() {
-            try {
-                const response = await fetch(GITHUB_API_URL, {
-                    headers: {
-                        'Authorization': `Bearer ${TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                const data = await response.json();
-                const conteudo = atob(data.content); // Decodifica o conteúdo base64
-                return JSON.parse(conteudo); // Retorna o JSON decodificado
-            } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                alert('Erro ao carregar dados!');
-            }
+    // Converte os dados para JSON e codifica em Base64
+    const content = JSON.stringify(data);
+    const encodedContent = btoa(unescape(encodeURIComponent(content)));
+
+    // Verifica se o arquivo já existe para obter o SHA (necessário para atualizar)
+    const response = await fetch(url, {
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
         }
+    });
 
-        // Função para salvar dados no GitHub
-        async function salvarDados(novosDados) {
-            try {
-                // Primeiro, obtenha o SHA do arquivo atual
-                const respostaAtual = await fetch(GITHUB_API_URL, {
-                    headers: {
-                        'Authorization': `Bearer ${TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                const dadoAtual = await respostaAtual.json();
-                const shaAtual = dadoAtual.sha;
+    let sha = null;
+    if (response.ok) {
+        const fileInfo = await response.json();
+        sha = fileInfo.sha;
+    }
 
-                // Converta os novos dados para base64
-                const conteudoAtualizado = btoa(JSON.stringify(novosDados, null, 2));
+    // Envia os dados para o GitHub
+    const updateResponse = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            message: 'Atualizando dados do site',
+            content: encodedContent,
+            sha: sha // Se o arquivo já existir, use o SHA para atualizá-lo
+        })
+    });
 
-                // Salve o novo conteúdo no repositório
-                await fetch(GITHUB_API_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: 'Atualizando dados via site',
-                        content: conteudoAtualizado,
-                        sha: shaAtual
-                    })
-                });
-                alert('Dados salvos com sucesso!');
-                exibirDados(); // Atualiza a exibição dos dados após salvar
-            } catch (error) {
-                console.error('Erro ao salvar dados:', error);
-                alert('Erro ao salvar dados!');
-            }
+    if (updateResponse.ok) {
+        console.log('Dados salvos com sucesso no GitHub!');
+    } else {
+        console.error('Erro ao salvar dados no GitHub:', await updateResponse.text());
+    }
+}
+
+// Função para carregar dados do GitHub
+async function loadDataFromGitHub() {
+    const token = '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 '; // Substitua pelo token que você gerou
+    const repo = 'Digaprograma/veteranos'; // Substitua pelo seu usuário e nome do repositório
+    const path = 'data.json'; // Nome do arquivo JSON
+    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+    const response = await fetch(url, {
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
         }
+    });
 
-        // Função para exibir os dados carregados no elemento <pre>
-        async function exibirDados() {
-            const dados = await carregarDados();
-            if (dados) {
-                document.getElementById('dados').textContent = JSON.stringify(dados, null, 2); // Exibe os dados formatados
-            }
-        }
+    if (response.ok) {
+        const fileInfo = await response.json();
+        const content = atob(fileInfo.content); // Decodifica o conteúdo Base64
+        return JSON.parse(content); // Converte o conteúdo de volta para JSON
+    } else {
+        console.error('Erro ao carregar dados do GitHub:', await response.text());
+        return null;
+      // Carregar dados ao iniciar o site
+window.onload = async function () {
+    const data = await loadDataFromGitHub();
+    if (data) {
+        // Atualize o estado do site com os dados carregados
+        standings = data.standings || {};
+        waitingList = data.waitingList || [];
+        licenses = data.licenses || [];
+        // ... e assim por diante
+    }
 
-        // Exibir os dados assim que a página carregar
-        window.onload = exibirDados;
-    </script>
-</head>
-<body>
-    
+    // Resto do código de inicialização
+};
 
-<script>
+// Salvar dados ao fazer alterações
+function updateStandings() {
+    // Atualiza a classificação
+    // ...
+
+    // Salva os dados no GitHub
+    const data = {
+        standings,
+        waitingList,
+        licenses,
+        // ... outros dados que você deseja salvar
+    };
+    saveDataToGitHub(data);
+}
+      
+    }
+}
 let currentTab = 'classification';
 const teams = ['Itália', 'Portugal', 'Holanda', 'Espanha'];
 let standings = {};
@@ -869,14 +887,6 @@ function displayAdminMatches() {
             <div id="admin-matches" class="admin-section active">
                 <h3>Gestão de Confrontos</h3>
                 <div>
-
-                <body>
-    <h1>Gravar Todas as Alterações</h1>
-    <button onclick="exibirDados({ mensagem: 'Dados Gravados!' })">Carregar Dados</button>
-    <button onclick="salvarDados({ mensagem: 'Nova mensagem salva!' })">Salvar Dados</button>
-    <pre id="dados"></pre> <!-- Área para exibir os dados carregados -->
-</body>
-
                     <button class="reset-button" onclick="resetChampionship()">Reiniciar Campeonato</button>
                 </div>
                 <div class="waiting-list-admin">
