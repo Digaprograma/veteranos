@@ -539,7 +539,6 @@
     }
 </style>
 <script>
-
 // Função para salvar dados no GitHub
 async function saveDataToGitHub(data) {
     const token = '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'; // Substitua pelo token que você gerou
@@ -587,6 +586,20 @@ async function saveDataToGitHub(data) {
     }
 }
 
+// Função para carregar dados do GitHub
+async function loadDataFromGitHub() {
+    const token = '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'; // Substitua pelo token que você gerou
+    const repo = 'Digaprograma/veteranos'; // Substitua pelo seu usuário e nome do repositório
+    const path = 'data.json'; // Nome do arquivo JSON
+    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+    const response = await fetch(url, {
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+        }
+    });
+
     if (response.ok) {
         const fileInfo = await response.json();
         const content = atob(fileInfo.content); // Decodifica o conteúdo Base64
@@ -596,6 +609,7 @@ async function saveDataToGitHub(data) {
         return null;
     }
 }
+
 // Carregar dados ao iniciar o site
 window.onload = async function () {
     const data = await loadDataFromGitHub();
@@ -624,7 +638,6 @@ function updateStandings() {
     };
     saveDataToGitHub(data);
 }
-
 let currentTab = 'classification';
 const teams = ['Itália', 'Portugal', 'Holanda', 'Espanha'];
 let standings = {};
