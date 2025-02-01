@@ -539,105 +539,6 @@
     }
 </style>
 <script>
-// Função para salvar dados no GitHub
-async function saveDataToGitHub(data) {
-    const token = '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'; // Substitua pelo token que você gerou
-    const repo = 'Digaprograma/veteranos'; // Substitua pelo seu usuário e nome do repositório
-    const path = 'data.json'; // Nome do arquivo JSON
-    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
-
-    // Converte os dados para JSON e codifica em Base64
-    const content = JSON.stringify(data);
-    const encodedContent = btoa(unescape(encodeURIComponent(content)));
-
-    // Verifica se o arquivo já existe para obter o SHA (necessário para atualizar)
-    const response = await fetch(url, {
-        headers: {
-            'Authorization': `token ${token}`,
-            'Accept': 'application/vnd.github.v3+json'
-        }
-    });
-
-    let sha = null;
-    if (response.ok) {
-        const fileInfo = await response.json();
-        sha = fileInfo.sha;
-    }
-
-    // Envia os dados para o GitHub
-    const updateResponse = await fetch(url, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `token ${token}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            message: 'Atualizando dados do site',
-            content: encodedContent,
-            sha: sha // Se o arquivo já existir, use o SHA para atualizá-lo
-        })
-    });
-
-    if (updateResponse.ok) {
-        console.log('Dados salvos com sucesso no GitHub!');
-    } else {
-        console.error('Erro ao salvar dados no GitHub:', await updateResponse.text());
-    }
-}
-
-// Função para carregar dados do GitHub
-async function loadDataFromGitHub() {
-    const token = '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'; // Substitua pelo token que você gerou
-    const repo = 'Digaprograma/veteranos'; // Substitua pelo seu usuário e nome do repositório
-    const path = 'data.json'; // Nome do arquivo JSON
-    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
-
-    const response = await fetch(url, {
-        headers: {
-            'Authorization': `token ${token}`,
-            'Accept': 'application/vnd.github.v3+json'
-        }
-    });
-
-    if (response.ok) {
-        const fileInfo = await response.json();
-        const content = atob(fileInfo.content); // Decodifica o conteúdo Base64
-        return JSON.parse(content); // Converte o conteúdo de volta para JSON
-    } else {
-        console.error('Erro ao carregar dados do GitHub:', await response.text());
-        return null;
-    }
-}
-
-// Carregar dados ao iniciar o site
-window.onload = async function () {
-    const data = await loadDataFromGitHub();
-    if (data) {
-        // Atualize o estado do site com os dados carregados
-        standings = data.standings || {};
-        waitingList = data.waitingList || [];
-        licenses = data.licenses || [];
-        // ... e assim por diante
-    }
-
-    // Resto do código de inicialização
-};
-
-// Salvar dados ao fazer alterações
-function updateStandings() {
-    // Atualiza a classificação
-    // ...
-
-    // Salva os dados no GitHub
-    const data = {
-        standings,
-        waitingList,
-        licenses,
-        // ... outros dados que você deseja salvar
-    };
-    saveDataToGitHub(data);
-}
 let currentTab = 'classification';
 const teams = ['Itália', 'Portugal', 'Holanda', 'Espanha'];
 let standings = {};
@@ -1912,70 +1813,67 @@ function toggleSection(header) {
   header.classList.toggle('collapsed');
   header.nextElementSibling.classList.toggle('collapsed');
 }
-window.onload = function () {
-  initializeTeams();
-  const savedMatches = localStorage.getItem('matches');
-  if (savedMatches) {
-    matches = JSON.parse(savedMatches);
-  } else {
-    generateMatches();
-  }
-  showTab('classification');
-  if (currentTab === 'admin') {
-    showAdminTab(currentAdminTab);
-  }
-  updateStandings();
-  displayMatches();
-  const savedWaitingList = localStorage.getItem('waitingList');
-  if (savedWaitingList) {
-    waitingList = JSON.parse(savedWaitingList);
-  }
-  const savedLicenses = localStorage.getItem('licenses');
-  if (savedLicenses) {
-    licenses = JSON.parse(savedLicenses);
-  }
-  const savedWaitingListAgain = localStorage.getItem('waitingList');
-  if (savedWaitingListAgain) {
-    waitingList = JSON.parse(savedWaitingListAgain);
+window.onload = async function () {
+    initializeTeams();
+
+    // Carrega os dados do GitHub
+    const data = await loadDataFromGitHub();
+    if (data) {
+        // Atualiza o estado do site com os dados carregados
+        standings = data.standings || {};
+        matches = data.matches || [];
+        waitingList = data.waitingList || [];
+        licenses = data.licenses || [];
+        topScorers = data.topScorers || {
+            'Itália': { name: '', goals: 0 },
+            'Portugal': { name: '', goals: 0 },
+            'Holanda': { name: '', goals: 0 },
+            'Espanha': { name: '', goals: 0 }
+        };
+        teamRosters = data.teamRosters || {
+            'Itália': Array(20).fill().map(() => ({ name: '', number: '', password: '', position: '' })),
+            'Portugal': Array(20).fill().map(() => ({ name: '', number: '', password: '', position: '' })),
+            'Holanda': Array(20).fill().map(() => ({ name: '', number: '', password: '', position: '' })),
+            'Espanha': Array(20).fill().map(() => ({ name: '', number: '', password: '', position: '' }))
+        };
+        playerCards = data.playerCards || {
+            'Itália': Array(20).fill().map(() => ({ name: '', yellowCards: 0, redCards: 0 })),
+            'Portugal': Array(20).fill().map(() => ({ name: '', yellowCards: 0, redCards: 0 })),
+            'Holanda': Array(20).fill().map(() => ({ name: '', yellowCards: 0, redCards: 0 })),
+            'Espanha': Array(20).fill().map(() => ({ name: '', yellowCards: 0, redCards: 0 }))
+        };
+        pollVotes = data.pollVotes || [];
+        hasVoted = new Set(data.hasVoted || []);
+        isVotingEnabled = data.isVotingEnabled !== undefined ? data.isVotingEnabled : true;
+    } else {
+        // Se não houver dados no GitHub, gera os dados iniciais
+        generateMatches();
+    }
+
+    showTab('classification');
+    if (currentTab === 'admin') {
+        showAdminTab(currentAdminTab);
+    }
+    updateStandings();
+    displayMatches();
     updateWaitingListTable();
     displayPublicWaitingList();
-  }
-  if (currentTab === 'waiting-list') {
-    displayPublicWaitingList();
-  }
-  if (currentTab === 'licenses') {
     displayPublicLicenses();
-  }
-  if (localStorage.getItem('statuteContent')) {
-    statuteContent = localStorage.getItem('statuteContent');
-    document.getElementById('statute-display').innerHTML = statuteContent.replace(/\n/g, '<br>');
-    if (document.getElementById('admin-statute-text')) {
-      document.getElementById('admin-statute-text').value = statuteContent;
+    displayPublicTeamRosters();
+    updateStatistics();
+
+    if (localStorage.getItem('statuteContent')) {
+        statuteContent = localStorage.getItem('statuteContent');
+        document.getElementById('statute-display').innerHTML = statuteContent.replace(/\n/g, '<br>');
+        if (document.getElementById('admin-statute-text')) {
+            document.getElementById('admin-statute-text').value = statuteContent;
+        }
     }
-  }
-  const savedTopScorers = localStorage.getItem('topScorers');
-  if (savedTopScorers) {
-    topScorers = JSON.parse(savedTopScorers);
-  }
-  const savedRosters = localStorage.getItem('teamRosters');
-  if (savedRosters) {
-    teamRosters = JSON.parse(savedRosters);
-  }
-  const savedPollVotes = localStorage.getItem('pollVotes');
-  if (savedPollVotes) {
-    pollVotes = JSON.parse(savedPollVotes);
-  }
-  const savedVotingStatus = localStorage.getItem('isVotingEnabled');
-  if (savedVotingStatus !== null) {
-    isVotingEnabled = JSON.parse(savedVotingStatus);
-  }
-  const savedHasVoted = localStorage.getItem('hasVoted');
-  if (savedHasVoted) {
-    hasVoted = new Set(JSON.parse(savedHasVoted));
-  }
-  if (currentTab === 'poll') {
-    displayPublicPoll();
-  }
+
+    if (currentTab === 'poll') {
+        displayPublicPoll();
+    }
+};
   const savedPlayerCards = localStorage.getItem('playerCards');
   if (savedPlayerCards) {
     playerCards = JSON.parse(savedPlayerCards);
@@ -2217,6 +2115,78 @@ function resetPlayerVotes() {
   }
 }
 </script>
+
+// Função para salvar dados no GitHub
+async function saveDataToGitHub(data) {
+    const token = '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'; // Seu token do GitHub
+    const repo = 'Digaprograma/veteranos'; // Seu usuário e repositório
+    const path = 'data.json'; // Nome do arquivo JSON
+    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+    // Converte os dados para JSON e codifica em Base64
+    const content = JSON.stringify(data);
+    const encodedContent = btoa(unescape(encodeURIComponent(content)));
+
+    // Verifica se o arquivo já existe para obter o SHA (necessário para atualizar)
+    const response = await fetch(url, {
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+        }
+    });
+
+    let sha = null;
+    if (response.ok) {
+        const fileInfo = await response.json();
+        sha = fileInfo.sha;
+    }
+
+    // Envia os dados para o GitHub
+    const updateResponse = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            message: 'Atualizando dados do site',
+            content: encodedContent,
+            sha: sha // Se o arquivo já existir, use o SHA para atualizá-lo
+        })
+    });
+
+    if (updateResponse.ok) {
+        console.log('Dados salvos com sucesso no GitHub!');
+    } else {
+        console.error('Erro ao salvar dados no GitHub:', await updateResponse.text());
+    }
+}
+
+// Função para carregar dados do GitHub
+async function loadDataFromGitHub() {
+    const token = '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'; // Seu token do GitHub
+    const repo = 'Digaprograma/veteranos'; // Seu usuário e repositório
+    const path = 'data.json'; // Nome do arquivo JSON
+    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+    const response = await fetch(url, {
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+        }
+    });
+
+    if (response.ok) {
+        const fileInfo = await response.json();
+        const content = atob(fileInfo.content); // Decodifica o conteúdo Base64
+        return JSON.parse(content); // Converte o conteúdo de volta para JSON
+    } else {
+        console.error('Erro ao carregar dados do GitHub:', await response.text());
+        return null;
+    }
+}
+
 </head>
 <body>
     <div class="container">
