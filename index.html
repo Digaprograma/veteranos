@@ -538,11 +538,12 @@
         display: none;
     }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>// Função para salvar dados no GitHub
+<script>
+
+// Função para salvar dados no GitHub
 async function saveDataToGitHub(data) {
-    const token = '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 '; // Substitua pelo token que você gerou
-    const repo = 'Digaprograma/veteranos'; // Substitua pelo seu usuário e nome do repositório
+    const token = 'SEU_TOKEN_AQUI'; // Substitua pelo token que você gerou
+    const repo = 'seu-usuario/seu-repositorio'; // Substitua pelo seu usuário e nome do repositório
     const path = 'data.json'; // Nome do arquivo JSON
     const url = `https://api.github.com/repos/${repo}/contents/${path}`;
 
@@ -588,7 +589,7 @@ async function saveDataToGitHub(data) {
 
 // Função para carregar dados do GitHub
 async function loadDataFromGitHub() {
-    const token = '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 '; // Substitua pelo token que você gerou
+    const token = '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'; // Substitua pelo token que você gerou
     const repo = 'Digaprograma/veteranos'; // Substitua pelo seu usuário e nome do repositório
     const path = 'data.json'; // Nome do arquivo JSON
     const url = `https://api.github.com/repos/${repo}/contents/${path}`;
@@ -607,7 +608,9 @@ async function loadDataFromGitHub() {
     } else {
         console.error('Erro ao carregar dados do GitHub:', await response.text());
         return null;
-      // Carregar dados ao iniciar o site
+    }
+}
+// Carregar dados ao iniciar o site
 window.onload = async function () {
     const data = await loadDataFromGitHub();
     if (data) {
@@ -635,9 +638,7 @@ function updateStandings() {
     };
     saveDataToGitHub(data);
 }
-      
-    }
-}
+
 let currentTab = 'classification';
 const teams = ['Itália', 'Portugal', 'Holanda', 'Espanha'];
 let standings = {};
@@ -887,7 +888,8 @@ function displayAdminMatches() {
             <div id="admin-matches" class="admin-section active">
                 <h3>Gestão de Confrontos</h3>
                 <div>
-                    <button class="reset-button" onclick="resetChampionship()">Reiniciar Campeonato</button>
+
+                                 <button class="reset-button" onclick="resetChampionship()">Reiniciar Campeonato</button>
                 </div>
                 <div class="waiting-list-admin">
                     <h3>Lista de Espera</h3>
