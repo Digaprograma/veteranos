@@ -587,20 +587,6 @@ async function saveDataToGitHub(data) {
     }
 }
 
-// Função para carregar dados do GitHub
-async function loadDataFromGitHub() {
-    const token = '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'; // Substitua pelo token que você gerou
-    const repo = 'Digaprograma/veteranos'; // Substitua pelo seu usuário e nome do repositório
-    const path = 'data.json'; // Nome do arquivo JSON
-    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
-
-    const response = await fetch(url, {
-        headers: {
-            'Authorization': `token ${token}`,
-            'Accept': 'application/vnd.github.v3+json'
-        }
-    });
-
     if (response.ok) {
         const fileInfo = await response.json();
         const content = atob(fileInfo.content); // Decodifica o conteúdo Base64
