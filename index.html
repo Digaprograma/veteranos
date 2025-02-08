@@ -1941,55 +1941,43 @@ window.onload = function () {
   initializeTeams();
   generateMatches();
   showTab('classification');
-  if (currentTab === 'admin') {
-    showAdminTab(currentAdminTab);
-  }
   updateStandings();
   displayMatches();
-  const savedWaitingList = localStorage.getItem('waitingList');
-  if (savedWaitingList) {
-    waitingList = JSON.parse(savedWaitingList);
-  }
-  const savedLicenses = localStorage.getItem('licenses');
-  if (savedLicenses) {
-    licenses = JSON.parse(savedLicenses);
-  }
-  if (currentTab === 'waiting-list') {
-    displayPublicWaitingList();
-  }
-  if (currentTab === 'licenses') {
-    displayPublicLicenses();
-  }
-  if (localStorage.getItem('statuteContent')) {
-    statuteContent = localStorage.getItem('statuteContent');
+
+  // Retrieve and display data from localStorage
+  const savedData = {
+    waitingList: localStorage.getItem('waitingList'),
+    licenses: localStorage.getItem('licenses'),
+    statuteContent: localStorage.getItem('statuteContent'),
+    topScorers: localStorage.getItem('topScorers'),
+    teamRosters: localStorage.getItem('teamRosters'),
+    pollVotes: localStorage.getItem('pollVotes'),
+    isVotingEnabled: localStorage.getItem('isVotingEnabled'),
+    hasVoted: localStorage.getItem('hasVoted'),
+    playerCards: localStorage.getItem('playerCards')
+  };
+
+  if (savedData.waitingList) waitingList = JSON.parse(savedData.waitingList);
+  if (savedData.licenses) licenses = JSON.parse(savedData.licenses);
+  if (savedData.statuteContent) {
+    statuteContent = savedData.statuteContent;
     document.getElementById('statute-display').innerHTML = statuteContent.replace(/\n/g, '<br>');
     if (document.getElementById('admin-statute-text')) {
       document.getElementById('admin-statute-text').value = statuteContent;
     }
   }
-  const savedTopScorers = localStorage.getItem('topScorers');
-  if (savedTopScorers) {
-    topScorers = JSON.parse(savedTopScorers);
-  }
-  const savedRosters = localStorage.getItem('teamRosters');
-  if (savedRosters) {
-    teamRosters = JSON.parse(savedRosters);
-  }
-  const savedPollVotes = localStorage.getItem('pollVotes');
-  if (savedPollVotes) {
-    pollVotes = JSON.parse(savedPollVotes);
-  }
-  const savedVotingStatus = localStorage.getItem('isVotingEnabled');
-  if (savedVotingStatus !== null) {
-    isVotingEnabled = JSON.parse(savedVotingStatus);
-  }
-  const savedHasVoted = localStorage.getItem('hasVoted');
-  if (savedHasVoted) {
-    hasVoted = new Set(JSON.parse(savedHasVoted));
-  }
-  if (currentTab === 'poll') {
-    displayPublicPoll();
-  }
+  if (savedData.topScorers) topScorers = JSON.parse(savedData.topScorers);
+  if (savedData.teamRosters) teamRosters = JSON.parse(savedData.teamRosters);
+  if (savedData.pollVotes) pollVotes = JSON.parse(savedData.pollVotes);
+  if (savedData.isVotingEnabled !== null) isVotingEnabled = JSON.parse(savedData.isVotingEnabled);
+  if (savedData.hasVoted) hasVoted = new Set(JSON.parse(savedData.hasVoted));
+  if (savedData.playerCards) playerCards = JSON.parse(savedData.playerCards);
+
+  // Display data based on the current tab
+  if (currentTab === 'waiting-list') displayPublicWaitingList();
+  if (currentTab === 'licenses') displayPublicLicenses();
+  if (currentTab === 'poll') displayPublicPoll();
+};
   const savedPlayerCards = localStorage.getItem('playerCards');
   if (savedPlayerCards) {
     playerCards = JSON.parse(savedPlayerCards);
