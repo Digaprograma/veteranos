@@ -1,0 +1,29 @@
+name: Atualizar JSON
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Roda a cada hora
+  workflow_dispatch:  # Permite rodar manualmente
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar o repositório
+        uses: actions/checkout@v3
+
+      - name: Atualizar JSON
+        run: |
+          echo '{
+            "ultima_atualizacao": "'$(date -u +'%Y-%m-%d %H:%M:%S')'",
+            "mensagem": "Este arquivo foi atualizado automaticamente!"
+          }' > dados.json
+
+      - name: Commit e Push das mudanças
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add dados.json
+          git commit -m "Atualizando JSON automaticamente"
+          git push
