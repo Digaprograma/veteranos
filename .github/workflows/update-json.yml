@@ -2,8 +2,8 @@ name: Atualizar JSON
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Runs every hour
-  workflow_dispatch:  # Allows manual trigger
+    - cron: '0 * * * *'  # Roda a cada hora
+  workflow_dispatch:  # Permite rodar manualmente
 
 jobs:
   update-json:
