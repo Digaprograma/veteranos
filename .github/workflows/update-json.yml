@@ -1,30 +1,39 @@
 name: Atualizar JSON
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: '0 * * * *'  # Roda a cada hora
+  workflow_dispatch:  # Permite rodar manualmente
 
 jobs:
   update-json:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write  # Grant write permission to contents
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Clonar o repositório
+        uses: actions/checkout@v3
 
-    - name: Update JSON
-      run: |
-        # Update your JSON file here
-        echo '{"key": "value"}' > dados.json
+      - name: Carregar JSON antigo
+        run: |
+          if [ -f dados.json ]; then
+            OLD_JSON=$(cat dados.json)
+          else
+            OLD_JSON='{}'
+          fi
+          echo "$OLD_JSON" > dados_antigos.json
 
-    - name: Commit changes
-      run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git add dados.json
-        git commit -m 'Atualizando JSON automaticamente'
-        git push
+      - name: Atualizar JSON
+        run: |
+          cat dados_antigos.json | jq '
+            .ultima_atualizacao = "'$(date -u +'%Y-%m-%d %H:%M:%S')'" |
+            .tabela_classificacao = [{"time": "Time A", "pontos": 10}, {"time": "Time B", "pontos": 8}] |
+            .tabela_confrontos = [{"time1": "Time A", "time2": "Time B", "placar": "2-1"}]
+          ' > dados.json
+
+      - name: Commit e Push das mudanças
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add dados.json
+          git commit -m "Atualizando JSON automaticamente"
+          git push
