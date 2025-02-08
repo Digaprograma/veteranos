@@ -24,8 +24,8 @@ jobs:
 
       - name: Atualizar JSON
         run: |
-          cat dados_antigos.json | jq '
-            .ultima_atualizacao = "'$(date -u +'%Y-%m-%d %H:%M:%S')'" |
+          cat dados_antigos.json | jq --arg date "$(date -u +'%Y-%m-%d %H:%M:%S')" '
+            .ultima_atualizacao = $date |
             .tabela_classificacao = [{"time": "Time A", "pontos": 10}, {"time": "Time B", "pontos": 8}] |
             .tabela_confrontos = [{"time1": "Time A", "time2": "Time B", "placar": "2-1"}]
           ' > dados.json
@@ -36,5 +36,4 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add dados.json
           git commit -m "Atualizando JSON automaticamente"
-          git push
           git push
