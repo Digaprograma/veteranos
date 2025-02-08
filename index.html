@@ -538,75 +538,8 @@
         display: none;
     }
 </style>
-<script>
-    const GITHUB_API_URL = 'https://api.github.com/repos/USUARIO/REPOSITORIO/contents/dados.json'; // Substitua por seu repositório
-    const TOKEN = 'SEU_TOKEN_AQUI'; // Insira aqui o seu token do GitHub
-
-    // Função para carregar dados do GitHub
-    async function carregarDados() {
-        try {
-            const response = await fetch(GITHUB_API_URL, {
-                headers: {
-                    'Authorization': `Bearer ${TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-            const data = await response.json();
-            const conteudo = atob(data.content); // Decodifica o conteúdo base64
-            return JSON.parse(conteudo); // Retorna o JSON decodificado
-        } catch (error) {
-            console.error('Erro ao carregar dados:', error);
-        }
-    }
-
-    // Função para salvar dados no GitHub
-    async function salvarDados(novosDados) {
-        try {
-            // Primeiro, obtenha o SHA do arquivo atual
-            const respostaAtual = await fetch(GITHUB_API_URL, {
-                headers: {
-                    'Authorization': `Bearer ${TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-            const dadoAtual = await respostaAtual.json();
-            const shaAtual = dadoAtual.sha;
-
-            // Converta os novos dados para base64
-            const conteudoAtualizado = btoa(JSON.stringify(novosDados, null, 2));
-
-            // Salve o novo conteúdo no repositório
-            await fetch(GITHUB_API_URL, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: 'Atualizando dados via site',
-                    content: conteudoAtualizado,
-                    sha: shaAtual
-                })
-            });
-            alert('Dados salvos com sucesso!');
-        } catch (error) {
-            console.error('Erro ao salvar dados:', error);
-        }
-    }
-
-    // Função para exibir os dados carregados
-    async function exibirDados() {
-        const dados = await carregarDados();
-        document.getElementById('dados').textContent = JSON.stringify(dados, null, 2);
-    }
-
-    // Exibir os dados assim que a página carregar
-    window.onload = exibirDados;
-</script>
-
-<script>
-let currentTab = 'classification';
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>let currentTab = 'classification';
 const teams = ['Itália', 'Portugal', 'Holanda', 'Espanha'];
 let standings = {};
 let matches = [];
@@ -855,14 +788,6 @@ function displayAdminMatches() {
             <div id="admin-matches" class="admin-section active">
                 <h3>Gestão de Confrontos</h3>
                 <div>
-
-                <body>
-    <h1>Gravar Todas as Alterações</h1>
-    <button onclick="exibirDados({ mensagem: 'Dados Gravados!' })">Carregar Dados</button>
-    <button onclick="salvarDados({ mensagem: 'Nova mensagem salva!' })">Salvar Dados</button>
-    <pre id="dados"></pre> <!-- Área para exibir os dados carregados -->
-</body>
-
                     <button class="reset-button" onclick="resetChampionship()">Reiniciar Campeonato</button>
                 </div>
                 <div class="waiting-list-admin">
@@ -895,37 +820,37 @@ function displayAdminMatches() {
                 <div class="licenses-admin">
                     <h3>Licenças</h3>
                     <div class="licenses-form">
-                      <input type="text" id="license-player-name" placeholder="Nome do atleta">
-                      <select id="license-team">
-                        ${teams.map(team => `<option value="${team}">${team}</option>`).join('')}
-                      </select>
-                      <input type="date" id="license-start-date">
-                      <input type="date" id="license-end-date">
-                      <button onclick="addLicense()">Adicionar Licença</button>
+                        <input type="text" id="license-player-name" placeholder="Nome do atleta">
+                        <select id="license-team">
+                            ${teams.map(team => `<option value="${team}">${team}</option>`).join('')}
+                        </select>
+                        <input type="date" id="license-start-date">
+                        <input type="date" id="license-end-date">
+                        <button onclick="addLicense()">Adicionar Licença</button>
                     </div>
                     <table class="licenses-table">
-                      <thead>
-                        <tr>
-                          <th>Nome</th>
-                          <th>Time</th>
-                          <th>Início</th>
-                          <th>Fim</th>
-                          <th>Ações</th>
-                        </tr>
-                      </thead>
-                      <tbody id="licenses-tbody">
-                        ${licenses.map((license, index) => `
-                          <tr>
-                            <td>${license.name}</td>
-                            <td>${license.team}</td>
-                            <td>${license.startDate}</td>
-                            <td>${license.endDate}</td>
-                            <td>
-                              <button class="remove-license-btn" onclick="removeLicense(${index})">Remover</button>
-                            </td>
-                          </tr>
-                        `).join('')}
-                      </tbody>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Time</th>
+                                <th>Início</th>
+                                <th>Fim</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="licenses-tbody">
+                            ${licenses.map((license, index) => `
+                                <tr>
+                                    <td>${license.name}</td>
+                                    <td>${license.team}</td>
+                                    <td>${license.startDate}</td>
+                                    <td>${license.endDate}</td>
+                                    <td>
+                                        <button class="remove-license-btn" onclick="removeLicense(${index})">Remover</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
                     </table>
                 </div>
                 <div class="admin-statute">
@@ -983,37 +908,37 @@ function displayAdminMatches() {
                 <div class="licenses-admin">
                     <h3>Licenças</h3>
                     <div class="licenses-form">
-                      <input type="text" id="license-player-name-l" placeholder="Nome do atleta">
-                      <select id="license-team-l">
-                        ${teams.map(team => `<option value="${team}">${team}</option>`).join('')}
-                      </select>
-                      <input type="date" id="license-start-date-l">
-                      <input type="date" id="license-end-date-l">
-                      <button onclick="addLicense()">Adicionar Licença</button>
+                        <input type="text" id="license-player-name-l" placeholder="Nome do atleta">
+                        <select id="license-team-l">
+                            ${teams.map(team => `<option value="${team}">${team}</option>`).join('')}
+                        </select>
+                        <input type="date" id="license-start-date-l">
+                        <input type="date" id="license-end-date-l">
+                        <button onclick="addLicense()">Adicionar Licença</button>
                     </div>
                     <table class="licenses-table">
-                      <thead>
-                        <tr>
-                          <th>Nome</th>
-                          <th>Time</th>
-                          <th>Início</th>
-                          <th>Fim</th>
-                          <th>Ações</th>
-                        </tr>
-                      </thead>
-                      <tbody id="licenses-tbody-l">
-                        ${licenses.map((license, index) => `
-                          <tr>
-                            <td>${license.name}</td>
-                            <td>${license.team}</td>
-                            <td>${license.startDate}</td>
-                            <td>${license.endDate}</td>
-                            <td>
-                              <button class="remove-license-btn" onclick="removeLicense(${index})">Remover</button>
-                            </td>
-                          </tr>
-                        `).join('')}
-                      </tbody>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Time</th>
+                                <th>Início</th>
+                                <th>Fim</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="licenses-tbody-l">
+                            ${licenses.map((license, index) => `
+                                <tr>
+                                    <td>${license.name}</td>
+                                    <td>${license.team}</td>
+                                    <td>${license.startDate}</td>
+                                    <td>${license.endDate}</td>
+                                    <td>
+                                        <button class="remove-license-btn" onclick="removeLicense(${index})">Remover</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -1082,23 +1007,19 @@ function displayAdminMatches() {
 }
 function updateMatchDate(index, date) {
   matches[index].date = date;
-  localStorage.setItem('matches', JSON.stringify(matches));
   updateStandings();
 }
 function updateMatchTime(index, time) {
   matches[index].time = time;
-  localStorage.setItem('matches', JSON.stringify(matches));
   updateStandings();
 }
 function updateScore(index, field, value) {
-  matches[index][field] = value === '' ? null : parseInt(value);
-  localStorage.setItem('matches', JSON.stringify(matches));
+  matches[index][field] = parseInt(value) || null;
   updateStandings();
   showSaveFeedback();
 }
 function updateCards(index, field, value) {
   matches[index][field] = parseInt(value) || 0;
-  localStorage.setItem('matches', JSON.stringify(matches));
   updateStandings();
   showSaveFeedback();
 }
@@ -1114,10 +1035,6 @@ function updateStandings() {
       standings[team1].redCards += match.redCards1;
       standings[team2].yellowCards += match.yellowCards2;
       standings[team2].redCards += match.redCards2;
-      standings[team1].goalsFor += match.score1;
-      standings[team1].goalsAgainst += match.score2;
-      standings[team2].goalsFor += match.score2;
-      standings[team2].goalsAgainst += match.score1;
       if (match.score1 > match.score2) {
         standings[team1].points += 2;
         standings[team1].wins++;
@@ -1126,7 +1043,7 @@ function updateStandings() {
         standings[team2].points += 2;
         standings[team2].wins++;
         standings[team1].losses++;
-      } else if (match.score1 === match.score2) {
+      } else {
         standings[team1].points += 1;
         standings[team2].points += 1;
         standings[team1].draws++;
@@ -1182,7 +1099,6 @@ function resetChampionship() {
     generateMatches();
     updateStandings();
     displayAdminMatches();
-    localStorage.removeItem('matches');
     showSaveFeedback();
   }
 }
@@ -1296,45 +1212,33 @@ function downloadStatute() {
   html2pdf().from(element).set(opt).save();
 }
 function addToWaitingList() {
-  let nameInput;
-  if (currentAdminTab === 'waitinglist') {
-    nameInput = document.getElementById('new-player-name-wl');
-  } else {
-    nameInput = document.getElementById('new-player-name');
-  }
+  const nameInput = document.getElementById('new-player-name');
   const name = nameInput.value.trim();
   if (name) {
     waitingList.push(name);
     nameInput.value = '';
     updateWaitingListTable();
-    displayPublicWaitingList();
-    localStorage.setItem('waitingList', JSON.stringify(waitingList));
     showSaveFeedback();
+    localStorage.setItem('waitingList', JSON.stringify(waitingList));
   }
 }
 function removeFromWaitingList(index) {
   waitingList.splice(index, 1);
   updateWaitingListTable();
-  displayPublicWaitingList();
-  localStorage.setItem('waitingList', JSON.stringify(waitingList));
   showSaveFeedback();
+  localStorage.setItem('waitingList', JSON.stringify(waitingList));
 }
 function updateWaitingListTable() {
-  const mainTbody = document.getElementById('waiting-list-tbody');
-  const wlTbody = document.getElementById('waiting-list-tbody-wl');
-  const tableContent = waitingList.map((player, index) => `
-    <tr>
-      <td>${player}</td>
-      <td>
-        <button class="remove-player-btn" onclick="removeFromWaitingList(${index})">Remover</button>
-      </td>
-    </tr>
-  `).join('');
-  if (mainTbody) {
-    mainTbody.innerHTML = tableContent;
-  }
-  if (wlTbody) {
-    wlTbody.innerHTML = tableContent;
+  const tbody = document.getElementById('waiting-list-tbody');
+  if (tbody) {
+    tbody.innerHTML = waitingList.map((player, index) => `
+                <tr>
+                    <td>${player}</td>
+                    <td>
+                        <button class="remove-player-btn" onclick="removeFromWaitingList(${index})">Remover</button>
+                    </td>
+                </tr>
+            `).join('');
   }
   if (currentTab === 'waiting-list') {
     displayPublicWaitingList();
@@ -1364,25 +1268,10 @@ function displayPublicWaitingList() {
   waitingListDiv.appendChild(table);
 }
 function addLicense() {
-  let nameInput, teamSelect, startDateInput, endDateInput;
-  
-  if (currentAdminTab === 'licenses') {
-    nameInput = document.getElementById('license-player-name-l');
-    teamSelect = document.getElementById('license-team-l'); 
-    startDateInput = document.getElementById('license-start-date-l');
-    endDateInput = document.getElementById('license-end-date-l');
-  } else {
-    nameInput = document.getElementById('license-player-name');
-    teamSelect = document.getElementById('license-team');
-    startDateInput = document.getElementById('license-start-date');
-    endDateInput = document.getElementById('license-end-date');
-  }
-
-  const name = nameInput.value.trim();
-  const team = teamSelect.value;
-  const startDate = startDateInput.value;
-  const endDate = endDateInput.value;
-
+  const name = document.getElementById('license-player-name').value.trim();
+  const team = document.getElementById('license-team').value;
+  const startDate = document.getElementById('license-start-date').value;
+  const endDate = document.getElementById('license-end-date').value;
   if (name && startDate && endDate) {
     licenses.push({
       name,
@@ -1390,23 +1279,25 @@ function addLicense() {
       startDate,
       endDate
     });
-
-    // Clear inputs
-    nameInput.value = '';
-    startDateInput.value = '';
-    endDateInput.value = '';
-
-    // Update displays
+    document.getElementById('license-player-name').value = '';
+    document.getElementById('license-start-date').value = '';
+    document.getElementById('license-end-date').value = '';
     updateLicensesTable();
-    displayPublicLicenses();
-    
-    // Save to localStorage
-    localStorage.setItem('licenses', JSON.stringify(licenses));
     showSaveFeedback();
-  } else {
-    alert('Por favor, preencha todos os campos obrigatórios');
+    localStorage.setItem('licenses', JSON.stringify(licenses));
+    displayPublicLicenses();
   }
 }
+const headerRow = `
+<thead>
+    <tr>
+        <th>Nome</th>
+        <th>Time</th>
+        <th>Início</th>
+        <th>Fim</th>
+    </tr>
+</thead>
+`;
 function removeLicense(index) {
   licenses.splice(index, 1);
   updateLicensesTable();
@@ -1415,26 +1306,19 @@ function removeLicense(index) {
   displayPublicLicenses();
 }
 function updateLicensesTable() {
-  const mainTbody = document.getElementById('licenses-tbody');
-  const licenseTbody = document.getElementById('licenses-tbody-l');
-  
-  const tableContent = licenses.map((license, index) => `
-    <tr>
-      <td>${license.name}</td>
-      <td>${license.team}</td>
-      <td>${license.startDate}</td>
-      <td>${license.endDate}</td>
-      <td>
-        <button class="remove-license-btn" onclick="removeLicense(${index})">Remover</button>
-      </td>
-    </tr>
-  `).join('');
-
-  if (mainTbody) {
-    mainTbody.innerHTML = tableContent;
-  }
-  if (licenseTbody) {
-    licenseTbody.innerHTML = tableContent;
+  const tbody = document.getElementById('licenses-tbody');
+  if (tbody) {
+    tbody.innerHTML = licenses.map((license, index) => `
+                <tr>
+                    <td>${license.name}</td>
+                    <td>${license.team}</td>
+                    <td>${license.startDate}</td>
+                    <td>${license.endDate}</td>
+                    <td>
+                        <button class="remove-license-btn" onclick="removeLicense(${index})">Remover</button>
+                    </td>
+                </tr>
+            `).join('');
   }
 }
 function displayPublicLicenses() {
@@ -1489,75 +1373,6 @@ function showAdminTab(tabName) {
   }
   if (tabName === 'teams') {
     displayTeamRosters();
-  }
-  if (tabName === 'waitinglist') {
-    const waitinglistDiv = document.getElementById('admin-waitinglist');
-    waitinglistDiv.innerHTML = `
-      <h3>Lista de Espera</h3>
-      <div class="waiting-list-controls">
-        <div class="waiting-list-form">
-          <input type="text" id="new-player-name-wl" placeholder="Nome do atleta">
-          <button onclick="addToWaitingList()">Adicionar Atleta</button>
-        </div>
-      </div>
-      <table class="waiting-list-table">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="waiting-list-tbody-wl">
-          ${waitingList.map((player, index) => `
-            <tr>
-              <td>${player}</td>
-              <td>
-                <button class="remove-player-btn" onclick="removeFromWaitingList(${index})">Remover</button>
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
-  }
-  if (tabName === 'licenses') {
-    const licensesDiv = document.getElementById('admin-licenses');
-    licensesDiv.innerHTML = `
-      <h3>Joga. Licenças</h3>
-      <div class="licenses-form">
-        <input type="text" id="license-player-name-l" placeholder="Nome do atleta">
-        <select id="license-team-l">
-          ${teams.map(team => `<option value="${team}">${team}</option>`).join('')}
-        </select>
-        <input type="date" id="license-start-date-l">
-        <input type="date" id="license-end-date-l">
-        <button onclick="addLicense()">Adicionar Licença</button>
-      </div>
-      <table class="licenses-table">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Time</th>
-            <th>Início</th>
-            <th>Fim</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="licenses-tbody-l">
-          ${licenses.map((license, index) => `
-            <tr>
-              <td>${license.name}</td>
-              <td>${license.team}</td>
-              <td>${license.startDate}</td>
-              <td>${license.endDate}</td>
-              <td>
-                <button class="remove-license-btn" onclick="removeLicense(${index})">Remover</button>
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    `;
   }
 }
 function calculateChampionshipProbability() {
@@ -1845,117 +1660,6 @@ function updateRoster(team, index, field, value) {
   }
   showSaveFeedback();
 }
-function displayPublicTeamRosters() {
-  const teamsDiv = document.getElementById('teams');
-  let html = '<h2>Times</h2>';
-  teams.forEach(team => {
-    html += `
-      <div class="team-roster">
-        <h3>${team}</h3>
-        <table class="roster-table">
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Número</th>
-              <th>Posição</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${teamRosters[team].filter(player => player.name).map(player => `
-                <tr>
-                  <td>${player.name}</td>
-                  <td>${player.number || ''}</td>
-                  <td>${player.position || ''}</td>
-                </tr>
-              `).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
-  });
-  teamsDiv.innerHTML = html;
-}
-function updatePlayerCards(team, index, field, value) {
-  if (field === 'yellowCards' || field === 'redCards') {
-    value = parseInt(value) || 0;
-  }
-  playerCards[team][index][field] = value;
-  localStorage.setItem('playerCards', JSON.stringify(playerCards));
-  showSaveFeedback();
-}
-function toggleSection(header) {
-  header.classList.toggle('collapsed');
-  header.nextElementSibling.classList.toggle('collapsed');
-}
-window.onload = function () {
-  initializeTeams();
-  const savedMatches = localStorage.getItem('matches');
-  if (savedMatches) {
-    matches = JSON.parse(savedMatches);
-  } else {
-    generateMatches();
-  }
-  showTab('classification');
-  if (currentTab === 'admin') {
-    showAdminTab(currentAdminTab);
-  }
-  updateStandings();
-  displayMatches();
-  const savedWaitingList = localStorage.getItem('waitingList');
-  if (savedWaitingList) {
-    waitingList = JSON.parse(savedWaitingList);
-  }
-  const savedLicenses = localStorage.getItem('licenses');
-  if (savedLicenses) {
-    licenses = JSON.parse(savedLicenses);
-  }
-  const savedWaitingListAgain = localStorage.getItem('waitingList');
-  if (savedWaitingListAgain) {
-    waitingList = JSON.parse(savedWaitingListAgain);
-    updateWaitingListTable();
-    displayPublicWaitingList();
-  }
-  if (currentTab === 'waiting-list') {
-    displayPublicWaitingList();
-  }
-  if (currentTab === 'licenses') {
-    displayPublicLicenses();
-  }
-  if (localStorage.getItem('statuteContent')) {
-    statuteContent = localStorage.getItem('statuteContent');
-    document.getElementById('statute-display').innerHTML = statuteContent.replace(/\n/g, '<br>');
-    if (document.getElementById('admin-statute-text')) {
-      document.getElementById('admin-statute-text').value = statuteContent;
-    }
-  }
-  const savedTopScorers = localStorage.getItem('topScorers');
-  if (savedTopScorers) {
-    topScorers = JSON.parse(savedTopScorers);
-  }
-  const savedRosters = localStorage.getItem('teamRosters');
-  if (savedRosters) {
-    teamRosters = JSON.parse(savedRosters);
-  }
-  const savedPollVotes = localStorage.getItem('pollVotes');
-  if (savedPollVotes) {
-    pollVotes = JSON.parse(savedPollVotes);
-  }
-  const savedVotingStatus = localStorage.getItem('isVotingEnabled');
-  if (savedVotingStatus !== null) {
-    isVotingEnabled = JSON.parse(savedVotingStatus);
-  }
-  const savedHasVoted = localStorage.getItem('hasVoted');
-  if (savedHasVoted) {
-    hasVoted = new Set(JSON.parse(savedHasVoted));
-  }
-  if (currentTab === 'poll') {
-    displayPublicPoll();
-  }
-  const savedPlayerCards = localStorage.getItem('playerCards');
-  if (savedPlayerCards) {
-    playerCards = JSON.parse(savedPlayerCards);
-  }
-};
 function displayPollAdmin() {
   const pollDiv = document.querySelector('#admin-poll .poll-admin');
   let html = `
@@ -2191,26 +1895,125 @@ function resetPlayerVotes() {
     showSaveFeedback();
   }
 }
-</script>
+function displayPublicTeamRosters() {
+  const teamsDiv = document.getElementById('teams');
+  let html = '<h2>Times</h2>';
+  teams.forEach(team => {
+    html += `
+      <div class="team-roster">
+        <h3>${team}</h3>
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Número</th>
+              <th>Posição</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${teamRosters[team].filter(player => player.name).map(player => `
+                <tr>
+                  <td>${player.name}</td>
+                  <td>${player.number || ''}</td>
+                  <td>${player.position || ''}</td>
+                </tr>
+              `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  });
+  teamsDiv.innerHTML = html;
+}
+function updatePlayerCards(team, index, field, value) {
+  if (field === 'yellowCards' || field === 'redCards') {
+    value = parseInt(value) || 0;
+  }
+  playerCards[team][index][field] = value;
+  localStorage.setItem('playerCards', JSON.stringify(playerCards));
+  showSaveFeedback();
+}
+function toggleSection(header) {
+  header.classList.toggle('collapsed');
+  header.nextElementSibling.classList.toggle('collapsed');
+}
+window.onload = function () {
+  initializeTeams();
+  generateMatches();
+  showTab('classification');
+  if (currentTab === 'admin') {
+    showAdminTab(currentAdminTab);
+  }
+  updateStandings();
+  displayMatches();
+  const savedWaitingList = localStorage.getItem('waitingList');
+  if (savedWaitingList) {
+    waitingList = JSON.parse(savedWaitingList);
+  }
+  const savedLicenses = localStorage.getItem('licenses');
+  if (savedLicenses) {
+    licenses = JSON.parse(savedLicenses);
+  }
+  if (currentTab === 'waiting-list') {
+    displayPublicWaitingList();
+  }
+  if (currentTab === 'licenses') {
+    displayPublicLicenses();
+  }
+  if (localStorage.getItem('statuteContent')) {
+    statuteContent = localStorage.getItem('statuteContent');
+    document.getElementById('statute-display').innerHTML = statuteContent.replace(/\n/g, '<br>');
+    if (document.getElementById('admin-statute-text')) {
+      document.getElementById('admin-statute-text').value = statuteContent;
+    }
+  }
+  const savedTopScorers = localStorage.getItem('topScorers');
+  if (savedTopScorers) {
+    topScorers = JSON.parse(savedTopScorers);
+  }
+  const savedRosters = localStorage.getItem('teamRosters');
+  if (savedRosters) {
+    teamRosters = JSON.parse(savedRosters);
+  }
+  const savedPollVotes = localStorage.getItem('pollVotes');
+  if (savedPollVotes) {
+    pollVotes = JSON.parse(savedPollVotes);
+  }
+  const savedVotingStatus = localStorage.getItem('isVotingEnabled');
+  if (savedVotingStatus !== null) {
+    isVotingEnabled = JSON.parse(savedVotingStatus);
+  }
+  const savedHasVoted = localStorage.getItem('hasVoted');
+  if (savedHasVoted) {
+    hasVoted = new Set(JSON.parse(savedHasVoted));
+  }
+  if (currentTab === 'poll') {
+    displayPublicPoll();
+  }
+  const savedPlayerCards = localStorage.getItem('playerCards');
+  if (savedPlayerCards) {
+    playerCards = JSON.parse(savedPlayerCards);
+  }
+};</script>
 </head>
 <body>
     <div class="container">
-        <h1>VETERANOS GRÊMIO MINEIRO</h1>
+        <h1>VETERANOS GR&#xc3;MIO MINEIRO</h1>
 
         <div class="tabs">
-            <button class="tab" onclick="showTab('classification')">Tab Classificação</button>
-            <button class="tab" onclick="showTab('matches')">Confrontos</button>
-            <button class="tab" onclick="showTab('statute')">Estatuto</button>
-            <button class="tab" onclick="showTab('waiting-list')">Lista de Espera</button>
-            <button class="tab" onclick="showTab('licenses')">Joga. Licenças</button>
-            <button class="tab" onclick="showTab('statistics')">Desempenho/Probabilidade</button>
-            <button class="tab" onclick="showTab('poll')">Enquete</button>
-            <button class="tab" onclick="showTab('admin')">Administrador</button>
-            <button class="tab" onclick="showTab('teams')">Times</button>
+            <button class="tab" onclick="showTab(&apos;classification&apos;)">Tab Classifica&#xe7;&#xe3;o</button>
+            <button class="tab" onclick="showTab(&apos;matches&apos;)">Confrontos</button>
+            <button class="tab" onclick="showTab(&apos;statute&apos;)">Estatuto</button>
+            <button class="tab" onclick="showTab(&apos;waiting-list&apos;)">Lista de Espera</button>
+            <button class="tab" onclick="showTab(&apos;licenses&apos;)">Joga. Licen&#xe7;as</button>
+            <button class="tab" onclick="showTab(&apos;statistics&apos;)">Desempenho/Probabilidade</button>
+            <button class="tab" onclick="showTab(&apos;poll&apos;)">Enquete</button>
+            <button class="tab" onclick="showTab(&apos;admin&apos;)">Administrador</button>
+            <button class="tab" onclick="showTab(&apos;teams&apos;)">Times</button>
         </div>
 
         <div id="classification" class="tab-content">
-            <h2>Tab Classificação</h2>
+            <h2>Tab Classifica&#xe7;&#xe3;o</h2>
             <table id="standings-table"></table>
         </div>
 
@@ -2234,14 +2037,14 @@ function resetPlayerVotes() {
         </div>
 
         <div id="licenses" class="tab-content" style="display: none;">
-            <h2>Joga. Licenças</h2>
+            <h2>Joga. Licen&#xe7;as</h2>
             <div class="licenses-display">
                 <table class="licenses-table">
                     <thead>
                         <tr>
                             <th>Nome</th>
                             <th>Time</th>
-                            <th>Início</th>
+                            <th>In&#xc3;&#xad;cio</th>
                             <th>Fim</th>
                         </tr>
                     </thead>
@@ -2258,7 +2061,7 @@ function resetPlayerVotes() {
         <div id="poll" class="tab-content" style="display: none;">
             <h2>Enquete - Melhor Jogador</h2>
             <div class="poll-login-form">
-                <h4>Login para Votação</h4>
+                <h4>Login para Vota&#xc3;&#xa7;&#xc3;&#xa3;o</h4>
                 <input type="text" id="player-name" placeholder="Seu nome">
                 <input type="password" id="player-number" placeholder="Senha" maxlength="4">
                 <button class="poll-button" onclick="playerLogin()">Entrar</button>
@@ -2269,11 +2072,11 @@ function resetPlayerVotes() {
                     <tr>
                       <th>Time</th>
                       <th>Jogador</th>
-                      <th>Posição</th>
+                      <th>Posi&#xc3;&#xa7;&#xc3;&#xa3;o</th>
                     </tr>
                   </thead>
                   <tbody>
-                    ${getPollResults()}
+                    &#x24;{getPollResults()}
                   </tbody>
                 </table>
             </div>
@@ -2290,15 +2093,15 @@ function resetPlayerVotes() {
             </div>
             <div id="admin-content" style="display: none;">
                 <div class="admin-tabs">
-                    <button class="admin-tab" onclick="showAdminTab('statute')">Estatuto</button>
-                    <button class="admin-tab" data-tab="waitinglist" onclick="showAdminTab('waitinglist')">Lista de Espera</button>
-                    <button class="admin-tab" onclick="showAdminTab('licenses')">Joga. Licenças</button>
-                    <button class="admin-tab" data-tab="statistics" onclick="showAdminTab('statistics')">Estatísticas</button>
-                    <button class="admin-tab" data-tab="poll" onclick="showAdminTab('poll')">Enquete</button>
-                    <button class="admin-tab" data-tab="teams" onclick="showAdminTab('teams')">Times</button>
+                    <button class="admin-tab" onclick="showAdminTab(&apos;statute&apos;)">Estatuto</button>
+                    <button class="admin-tab" onclick="showAdminTab(&apos;waiting-list&apos;)">Lista de Espera</button>
+                    <button class="admin-tab" onclick="showAdminTab(&apos;licenses&apos;)">Joga. Licen&#xe7;as</button>
+                    <button class="admin-tab" data-tab="statistics" onclick="showAdminTab(&apos;statistics&apos;)">Desempenho/Probabilidade</button>
+                    <button class="admin-tab" data-tab="poll" onclick="showAdminTab(&apos;poll&apos;)">Enquete</button>
+                    <button class="admin-tab" data-tab="teams" onclick="showAdminTab(&apos;teams&apos;)">Times</button>
                 </div>
                 <div id="admin-statute" class="admin-section">
-                    <h3>Gestão do Estatuto</h3>
+                    <h3>Gest&#xc3;&#xa3;o do Estatuto</h3>
                     <textarea id="admin-statute-text" placeholder="Digite o estatuto aqui..."></textarea>
                     <div class="admin-statute-controls">
                         <button class="statute-button" onclick="saveAdminStatute()">Salvar Estatuto</button>
@@ -2309,6 +2112,7 @@ function resetPlayerVotes() {
                     <!-- Admin waiting list content -->
                 </div>
                 <div id="admin-licenses" class="admin-section" style="display: none;">
+                    <h3>Joga. Licen&#xe7;as</h3>
                     <!-- Admin licenses content -->
                 </div>
                 <div id="admin-statistics" class="admin-section" style="display: none;">
