@@ -2,8 +2,8 @@ name: Atualizar JSON
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Roda a cada hora
-  workflow_dispatch:  # Permite rodar manualmente
+    - cron: '0 * * * *'  # Runs every hour
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   update-json:
@@ -13,12 +13,22 @@ jobs:
       - name: Clonar o repositório
         uses: actions/checkout@v3
 
+      - name: Carregar JSON antigo
+        run: |
+          if [ -f dados.json ]; then
+            OLD_JSON=$(cat dados.json)
+          else
+            OLD_JSON='{}'
+          fi
+          echo "$OLD_JSON" > dados_antigos.json
+
       - name: Atualizar JSON
         run: |
-          echo '{
-            "ultima_atualizacao": "'$(date -u +'%Y-%m-%d %H:%M:%S')'",
-            "mensagem": "Este arquivo foi atualizado automaticamente!"
-          }' > dados.json
+          cat dados_antigos.json | jq '
+            .ultima_atualizacao = "'$(date -u +'%Y-%m-%d %H:%M:%S')'" |
+            .tabela_classificacao = [{"time": "Time A", "pontos": 10}, {"time": "Time B", "pontos": 8}] |
+            .tabela_confrontos = [{"time1": "Time A", "time2": "Time B", "placar": "2-1"}]
+          ' > dados.json
 
       - name: Commit e Push das mudanças
         run: |
@@ -26,4 +36,5 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add dados.json
           git commit -m "Atualizando JSON automaticamente"
+          git push
           git push
