@@ -1,10 +1,3 @@
-name: Atualizar JSON
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   update-json:
     runs-on: ubuntu-latest
