@@ -538,10 +538,10 @@
         display: none;
     }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script><script>
-// Suas funções existentes...
+<script> 
+src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+<script>
 // Adicione esta função para capturar as alterações feitas na aba "Confrontos"
 function saveMatchData() {
   const updatedMatches = matches.map(match => ({
@@ -578,7 +578,7 @@ function saveDataToGitHub(data) {
     body: JSON.stringify({
       message: 'Atualizando dados dos confrontos',
       content: btoa(JSON.stringify(data)),
-      sha: 'SHA_DO_ARQUIVO_ATUAL' // Certifique-se de obter o SHA atual do arquivo `dados.json`
+      sha: '7a6020a524a695436ba1c5a95af3ae85ac58e51d' // SHA atual do arquivo dados.json
     })
   })
   .then(response => response.json())
@@ -590,6 +590,9 @@ function saveDataToGitHub(data) {
   });
 }
 </script>
+  
+<script>
+  
 let currentTab = 'classification';
 const teams = ['Itália', 'Portugal', 'Holanda', 'Espanha'];
 let standings = {};
@@ -837,7 +840,8 @@ function displayAdminMatches() {
                 <button class="admin-tab" data-tab="teams" onclick="showAdminTab('teams')">Times</button>
             </div>
             <div id="admin-matches" class="admin-section active">
-                <h3>Gestão de Confrontos</h3>
+                <h3>Gestão de Confrontos</h3>   
+                   <button onclick="saveMatchData()">Salvar Confrontos</button>
                 <div>
                     <button class="reset-button" onclick="resetChampionship()">Reiniciar Campeonato</button>
                 </div>
