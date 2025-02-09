@@ -2332,3 +2332,53 @@ function resetPlayerVotes() {
     </div>
 </body>
 </html>
+<script>
+// Adicione esta função para capturar as alterações feitas na aba "Confrontos"
+function saveMatchData() {
+  const updatedMatches = matches.map(match => ({
+    round: match.round,
+    team1: match.team1,
+    team2: match.team2,
+    score1: match.score1,
+    score2: match.score2,
+    yellowCards1: match.yellowCards1,
+    yellowCards2: match.yellowCards2,
+    redCards1: match.redCards1,
+    redCards2: match.redCards2,
+    date: match.date,
+    time: match.time
+  }));
+
+  const data = {
+    ultima_atualizacao: new Date().toISOString(),
+    confrontos: updatedMatches
+  };
+
+  // Enviar dados para o GitHub
+  saveDataToGitHub(data);
+}
+
+// Função para enviar os dados para o GitHub
+function saveDataToGitHub(data) {
+  const GITHUB_TOKEN = 'SEU_TOKEN_PESSOAL'; // Substitua por seu token de acesso pessoal
+  fetch('https://api.github.com/repos/Digaprograma/veteranos/contents/dados.json', {
+    method: 'PUT',
+    headers: {
+      'Authorization': `token ${GITHUB_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      message: 'Atualizando dados dos confrontos',
+      content: btoa(JSON.stringify(data)),
+      sha: '7a6020a524a695436ba1c5a95af3ae85ac58e51d' // SHA atual do arquivo dados.json
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+}
+</script>
