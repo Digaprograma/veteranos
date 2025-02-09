@@ -539,6 +539,20 @@
     }
 </style>
 <script> 
+async function salvarDadosNoGitHub(dados) {
+    const resposta = await fetch("https://backend-github.onrender.com/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados),
+    });
+
+    const resultado = await resposta.json();
+    console.log(resultado);
+}
+
+// Exemplo de como salvar
+salvarDadosNoGitHub({ mensagem: "Teste de salvamento na nuvem!" });
+
 src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
