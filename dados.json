@@ -1,4 +1,26 @@
 {
-  "ultima_atualizacao": "ainda não atualizado",
-  "mensagem": "Olá, mundo!"
+  "campeonato": {
+    "times": [
+      {
+        "nome": "Itália",
+        "pontos": 0,
+        "gols": 0
+      },
+      {
+        "nome": "Portugal",
+        "pontos": 0,
+        "gols": 0
+      },
+      {
+        "nome": "Holanda",
+        "pontos": 0,
+        "gols": 0
+      },
+      {
+        "nome": "Espanha",
+        "pontos": 0,
+        "gols": 0
+      }
+    ]
+  }
 }
