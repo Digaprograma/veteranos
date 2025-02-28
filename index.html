@@ -774,7 +774,106 @@
             border: 1px solid #ddd;
             text-align: left;
         }
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pelada dos Veteranos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Pelada dos Veteranos</h1>
+    <table id="standings-table"></table>
+  </div>
+
+  <script>
+    async function loadData() {
+      try {
+        // URL do arquivo JSON no GitHub
+        const url = 'https://raw.githubusercontent.com/Digaprograma
+/Digaprograma-veteranos/main/data.json';
+        
+        // Faz a requisição para carregar o arquivo JSON
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        // Exibe os dados no console para verificar
+        console.log(data);
+
+        // Atualiza a tabela na tela com os dados carregados
+        updateStandings(data.standings);
+      } catch (error) {
+        console.error('Erro ao carregar os dados:', error);
+      }
+    }
+
+    // Função para atualizar a tabela na tela
+    function updateStandings(standings) {
+      const table = document.getElementById('standings-table');
+      table.innerHTML = `
+        <tr>
+          <th>Time</th>
+          <th>Pontos</th>
+          <th>Jogos</th>
+          <th>Vitórias</th>
+          <th>Empates</th>
+          <th>Derrotas</th>
+        </tr>
+      `;
+
+      for (const [team, stats] of Object.entries(standings)) {
+        table.innerHTML += `
+          <tr>
+            <td>${team}</td>
+            <td>${stats.points}</td>
+            <td>${stats.games}</td>
+            <td>${stats.wins}</td>
+            <td>${stats.draws}</td>
+            <td>${stats.losses}</td>
+          </tr>
+        `;
+      }
+    }
+
+    // Carrega os dados ao abrir a página
+    loadData();
+
+    // Atualiza os dados a cada 10 segundos
+    setInterval(loadData, 10000);
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+        
     </style>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         let currentTab = 'classification';
