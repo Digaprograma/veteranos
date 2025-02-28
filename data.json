@@ -1,7 +1,7 @@
 {
   "standings": {
-    "Itália": { "points": 6, "games": 2, "wins": 2, "draws": 0, "losses": 0 },
-    "Portugal": { "points": 3, "games": 2, "wins": 1, "draws": 0, "losses": 1 }
+    "Itália": { "points": 0, "games": 0, "wins": 0, "draws": 0, "losses": 0 },
+    "Portugal": { "points": 0, "games": 0, "wins": 0, "draws": 0, "losses": 0 }
   },
   "matches": [
     { "round": 1, "team1": "Itália", "team2": "Portugal", "score1": 2, "score2": 1 }
