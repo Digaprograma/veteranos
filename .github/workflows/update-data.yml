@@ -23,13 +23,11 @@ jobs:
           node-version: '16'
 
       # Passo 3: Executa um script para atualizar o arquivo data.json
-      - name: Executar script de atualização
-        run: |
-          # Aqui você pode rodar um script para atualizar o data.json
-          # Exemplo: node update-script.js
-          echo "Atualizando dados..."
-          echo '{"standings": {"Itália": {"points": 6, "games": 2, "wins": 2, "draws": 0, "losses": 0}, "Portugal": {"points": 3, "games": 2, "wins": 1, "draws": 0, "losses": 1}}}' > data.json
-
+      -- name: Executar script de atualização
+  run: |
+    npm install # Instala as dependências (se necessário)
+    node update-script.js
+    
       # Passo 4: Faz commit das alterações
       - name: Commit das alterações
                   - nome: Configurar ambiente Node.js
