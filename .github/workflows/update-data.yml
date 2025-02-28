@@ -3,8 +3,8 @@ name: Atualizar dados da tabela
 # Define quando o workflow será executado
 on:
   schedule:
-    # Executa todos os dias à meia-noite (UTC)
-    - cron: '0 0 * * *'
+    # Executa todos os dias à A cada 30 minutos (UTC)
+    - cron: '*/30 * * * *'
   workflow_dispatch: # Permite executar manualmente
 
 jobs:
