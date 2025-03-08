@@ -3,7 +3,7 @@ name: Atualizar Dados do Campeonato
 on:
   push:
     branches:
-      - main # Aqui você pode mudar para outra branch, se necessário
+      - main
 
 jobs:
   update-data:
