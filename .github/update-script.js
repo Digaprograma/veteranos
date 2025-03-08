@@ -13,4 +13,4 @@ const data = {
 
 // Salva os dados no arquivo data.json
 fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
-console.log('Arquivo data.json atualizado!');
+console.log('Arquivo dados.json atualizado!');
