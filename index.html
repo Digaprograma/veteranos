@@ -737,43 +737,6 @@
         .no-votes {
             color: #f44336;
         }
-        
-        /* Team Display Styles */
-        .team-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .team-tab {
-            padding: 8px 16px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        .team-tab.active {
-            background: #2196F3;
-        }
-        
-        .team-roster-display {
-            margin-top: 20px;
-        }
-        
-        .team-roster-display table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .team-roster-display th,
-        .team-roster-display td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
@@ -810,26 +773,22 @@
           'Itália': Array(20).fill().map(() => ({
             name: '',
             number: '',
-            password: '',
-            position: ''
+            password: ''
           })),
           'Portugal': Array(20).fill().map(() => ({
             name: '',
             number: '',
-            password: '',
-            position: ''
+            password: ''
           })),
           'Holanda': Array(20).fill().map(() => ({
             name: '',
             number: '',
-            password: '',
-            position: ''
+            password: ''
           })),
           'Espanha': Array(20).fill().map(() => ({
             name: '',
             number: '',
-            password: '',
-            position: ''
+            password: ''
           }))
         };
         let pollVotes = [];
@@ -978,8 +937,8 @@
           if (tabName === 'democracy') {
             displayDemocracy();
           }
-          if (tabName === 'teams') {
-            displayTeams();
+          if (tabName === 'statistics') {
+            displayStatistics();
           }
         }
         function adminLogin() {
@@ -1284,19 +1243,23 @@
         function updateMatchDate(index, date) {
           matches[index].date = date;
           updateStandings();
+          localStorage.setItem('matches', JSON.stringify(matches));
         }
         function updateMatchTime(index, time) {
           matches[index].time = time;
           updateStandings();
+          localStorage.setItem('matches', JSON.stringify(matches));
         }
         function updateScore(index, field, value) {
-          matches[index][field] = value === '' ? null : parseInt(value) || 0;
+          matches[index][field] = parseInt(value) || null;
           updateStandings();
+          localStorage.setItem('matches', JSON.stringify(matches));
           showSaveFeedback();
         }
         function updateCards(index, field, value) {
           matches[index][field] = parseInt(value) || 0;
           updateStandings();
+          localStorage.setItem('matches', JSON.stringify(matches));
           showSaveFeedback();
         }
         function updateStandings() {
@@ -1315,22 +1278,24 @@
               standings[team1].goalsAgainst += match.score2;
               standings[team2].goalsFor += match.score2;
               standings[team2].goalsAgainst += match.score1;
-              if (match.score1 === match.score2) {
+              if (match.score1 > match.score2) {
+                standings[team1].points += 2;
+                standings[team1].wins++;
+                standings[team2].losses++;
+              } else if (match.score2 > match.score1) {
+                standings[team2].points += 2;
+                standings[team2].wins++;
+                standings[team1].losses++;
+              } else {
                 standings[team1].points += 1;
                 standings[team2].points += 1;
                 standings[team1].draws++;
                 standings[team2].draws++;
-              } else if (match.score1 > match.score2) {
-                standings[team1].points += 2;
-                standings[team1].wins++;
-                standings[team2].losses++;
-              } else {
-                standings[team2].points += 2;
-                standings[team2].wins++;
-                standings[team1].losses++;
               }
             }
           });
+          localStorage.setItem('standings', JSON.stringify(standings));
+          localStorage.setItem('matches', JSON.stringify(matches));
           displayStandings();
         }
         function displayStandings() {
@@ -1409,6 +1374,10 @@
         }
         function resetChampionship() {
           if (confirm('Tem certeza que deseja reiniciar o campeonato? Todos os resultados serão apagados.')) {
+            // Clear saved data
+            localStorage.removeItem('standings');
+            localStorage.removeItem('matches');
+            
             initializeTeams();
             generateMatches();
             updateStandings();
@@ -1457,8 +1426,9 @@
           showSaveFeedback();
         }
         function saveAdminStatute() {
-          const statuteText = document.getElementById('admin-statute-text-s').value || document.getElementById('admin-statute-text').value;
+          const statuteText = document.getElementById('admin-statute-text').value;
           statuteContent = statuteText;
+          document.getElementById('statute-text').value = statuteText;
           document.getElementById('statute-display').innerHTML = statuteText.replace(/\n/g, '<br>');
           localStorage.setItem('statuteContent', statuteContent);
           showSaveFeedback();
@@ -1666,7 +1636,84 @@
                     </div>
                 `;
           if (tabName === 'statistics') {
-            updateStatistics();
+            const statisticsAdmin = document.querySelector('.statistics-admin');
+            statisticsAdmin.innerHTML = `
+                <div class="statistics-section">
+                    <h3>Artilheiros por Time</h3>
+                    <table class="statistics-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Jogador</th>
+                                <th>Gols</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(topScorers).map(([team, scorer]) => `
+                                <tr>
+                                    <td>${team}</td>
+                                    <td>
+                                        <input type="text" 
+                                               value="${scorer.name || ''}"
+                                               onchange="updateTopScorer('${team}', 'name', this.value)">
+                                    </td>
+                                    <td>
+                                        <input type="number" 
+                                               value="${scorer.goals || 0}"
+                                               onchange="updateTopScorer('${team}', 'goals', this.value)">
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="statistics-section">
+                    <h3>Probabilidade de Título</h3>
+                    <table class="statistics-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Probabilidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(calculateChampionshipProbability())
+                                .sort(([, a], [, b]) => b - a)
+                                .map(([team, probability]) => `
+                                    <tr>
+                                        <td>${team}</td>
+                                        <td>${probability}%</td>
+                                    </tr>
+                                `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="statistics-section">
+                    <h3>Cartões</h3>
+                    <table class="statistics-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Cartões Amarelos</th>
+                                <th>Cartões Vermelhos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(standings)
+                                .sort(([, a], [, b]) => (b.yellowCards + b.redCards*2) - (a.yellowCards + a.redCards*2))
+                                .map(([team, stats]) => `
+                                    <tr>
+                                        <td>${team}</td>
+                                        <td>${stats.yellowCards}</td>
+                                        <td>${stats.redCards}</td>
+                                    </tr>
+                                `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
           }
           if (tabName === 'poll') {
             displayPollAdmin();
@@ -1737,68 +1784,81 @@
           });
           return probabilities;
         }
-        function updateStatistics() {
-          const statisticsDiv = document.querySelector('#admin-statistics .statistics-admin');
+        function displayStatistics() {
+          const statisticsDiv = document.getElementById('statistics');
           const probabilities = calculateChampionshipProbability();
           let html = `
-                    <div class="statistics-section">
-                        <h4>Probabilidade de Título</h4>
-                        <table class="statistics-table">
-                            <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Probabilidade</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `;
-          Object.entries(probabilities).sort(([, a], [, b]) => b - a).forEach(([team, probability]) => {
-            html += `
-                            <tr>
-                                <td>${team}</td>
-                                <td>${probability}%</td>
-                            </tr>
-                        `;
-          });
-          html += `
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="statistics-section">
-                        <h4>Artilheiros por Time</h4>
-                        <table class="statistics-table">
-                            <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Jogador</th>
-                                    <th>Gols</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `;
-          Object.entries(topScorers).forEach(([team, scorer]) => {
-            html += `
-                    <tr>
-                        <td>${team}</td>
-                        <td>
-                            <input type="text" 
-                                   value="${scorer.name}" 
-                                   onchange="updateTopScorer('${team}', 'name', this.value)">
-                        </td>
-                        <td>
-                            <input type="number" 
-                                   min="0" 
-                                   value="${scorer.goals}"
-                                   onchange="updateTopScorer('${team}', 'goals', this.value)">
-                        </td>
-                    </tr>
-                `;
-          });
-          html += `
-                            </tbody>
-                        </table>
-                    </div>
-                `;
+              <div class="statistics-section">
+                  <h3>Probabilidade de Título</h3>
+                  <table class="statistics-table">
+                      <thead>
+                          <tr>
+                              <th>Time</th>
+                              <th>Probabilidade</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          ${Object.entries(probabilities)
+                              .sort(([, a], [, b]) => b - a)
+                              .map(([team, probability]) => `
+                                  <tr>
+                                      <td>${team}</td>
+                                      <td>${probability}%</td>
+                                  </tr>
+                              `).join('')}
+                      </tbody>
+                  </table>
+              </div>
+              
+              <div class="statistics-section">
+                  <h3>Artilheiros por Time</h3>
+                  <table class="statistics-table">
+                      <thead>
+                          <tr>
+                              <th>Time</th>
+                              <th>Jogador</th>
+                              <th>Gols</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          ${Object.entries(topScorers)
+                              .sort(([, a], [, b]) => b.goals - a.goals)
+                              .map(([team, scorer]) => `
+                                  <tr>
+                                      <td>${team}</td>
+                                      <td>${scorer.name || '-'}</td>
+                                      <td>${scorer.goals || 0}</td>
+                                  </tr>
+                              `).join('')}
+                      </tbody>
+                  </table>
+              </div>
+              
+              <div class="statistics-section">
+                  <h3>Cartões</h3>
+                  <table class="statistics-table">
+                      <thead>
+                          <tr>
+                              <th>Time</th>
+                              <th>Cartões Amarelos</th>
+                              <th>Cartões Vermelhos</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          ${Object.entries(standings)
+                              .sort(([, a], [, b]) => (b.yellowCards + b.redCards*2) - (a.yellowCards + a.redCards*2))
+                              .map(([team, stats]) => `
+                                  <tr>
+                                      <td>${team}</td>
+                                      <td>${stats.yellowCards}</td>
+                                      <td>${stats.redCards}</td>
+                                  </tr>
+                              `).join('')}
+                      </tbody>
+                  </table>
+              </div>
+          `;
+          
           statisticsDiv.innerHTML = html;
         }
         function updateTopScorer(team, field, value) {
@@ -1821,7 +1881,6 @@
                     <tr>
                       <th>Número</th>
                       <th>Nome do Atleta</th>
-                      <th>Posição</th>
                       <th>Senha</th>
                     </tr>
                   </thead>
@@ -1839,17 +1898,6 @@
                           <input type="text" 
                                  value="${player.name}"
                                  onchange="updateRoster('${team}', ${index}, 'name', this.value)">
-                        </td>
-                        <td>
-                          <select onchange="updateRoster('${team}', ${index}, 'position', this.value)">
-                            <option value="" ${!player.position ? 'selected' : ''}>Selecione...</option>
-                            <option value="Goleiro" ${player.position === 'Goleiro' ? 'selected' : ''}>Goleiro</option>
-                            <option value="Zagueiro" ${player.position === 'Zagueiro' ? 'selected' : ''}>Zagueiro</option>
-                            <option value="Lateral" ${player.position === 'Lateral' ? 'selected' : ''}>Lateral</option>
-                            <option value="Volante" ${player.position === 'Volante' ? 'selected' : ''}>Volante</option>
-                            <option value="Meio-Campo" ${player.position === 'Meio-Campo' ? 'selected' : ''}>Meio-Campo</option>
-                            <option value="Atacante" ${player.position === 'Atacante' ? 'selected' : ''}>Atacante</option>
-                          </select>
                         </td>
                         <td>
                           <input type="text"
@@ -2037,7 +2085,6 @@
                     <div class="poll-form">
                         <select id="poll-team-public" onchange="updatePlayersListPublic()">
                             <option value="">Selecione o Time</option>
-                            ${teams.map(team => `<option value="${team}">${team}</option>`).join('')}
                         </select>
                         <select id="poll-player-public">
                             <option value="">Selecione o Jogador</option>
@@ -2064,13 +2111,13 @@
             `;
         }
         function playerLogin() {
-          const playerName = document.getElementById('player-name').value;
-          const playerPassword = document.getElementById('player-number').value;
+          const name = document.getElementById('player-name').value;
+          const number = document.getElementById('player-number').value;
 
           // Validate credentials
           let isValidPlayer = false;
           for (const team in teamRosters) {
-            const player = teamRosters[team].find(p => p.name === playerName && p.password === playerPassword);
+            const player = teamRosters[team].find(p => p.name === name && p.password === number);
             if (player) {
               isValidPlayer = true;
               break;
@@ -2082,7 +2129,7 @@
             return;
           }
 
-          if (hasVoted.has(playerName)) {
+          if (hasVoted.has(name)) {
             alert('Você já votou!');
             return;
           }
@@ -2343,111 +2390,25 @@
             }
         }
 
-        function displayTeams() {
-            const teamsDiv = document.getElementById('teams');
-            const teamsHeader = teamsDiv.querySelector('h2');
-            teamsDiv.innerHTML = '';
-            teamsDiv.appendChild(teamsHeader);
-            
-            // Create team tabs
-            const teamTabsDiv = document.createElement('div');
-            teamTabsDiv.className = 'team-tabs';
-            teams.forEach((team, index) => {
-                const tabButton = document.createElement('button');
-                tabButton.className = 'team-tab' + (index === 0 ? ' active' : '');
-                tabButton.textContent = team;
-                tabButton.onclick = () => showTeamRoster(team);
-                teamTabsDiv.appendChild(tabButton);
-            });
-            teamsDiv.appendChild(teamTabsDiv);
-            
-            // Create roster display div
-            const rosterDisplayDiv = document.createElement('div');
-            rosterDisplayDiv.className = 'team-roster-display';
-            rosterDisplayDiv.id = 'team-roster-display';
-            teamsDiv.appendChild(rosterDisplayDiv);
-            
-            // Show first team's roster by default
-            showTeamRoster(teams[0]);
-        }
-        
-        function showTeamRoster(teamName) {
-            // Update active tab
-            document.querySelectorAll('.team-tab').forEach(tab => {
-                tab.classList.toggle('active', tab.textContent === teamName);
-            });
-            
-            const rosterDisplay = document.getElementById('team-roster-display');
-            const roster = teamRosters[teamName];
-            
-            // Filter out empty entries and sort by number
-            const filteredRoster = roster
-                .filter(player => player.name && player.number)
-                .sort((a, b) => a.number - b.number);
-            
-            // Create the table
-            let tableHTML = `
-                <h3>${teamName}</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Número</th>
-                            <th>Nome do Atleta</th>
-                            <th>Posição</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            if (filteredRoster.length === 0) {
-                tableHTML += `
-                    <tr>
-                        <td colspan="3" style="text-align: center;">Nenhum jogador cadastrado</td>
-                    </tr>
-                `;
-            } else {
-                filteredRoster.forEach(player => {
-                    tableHTML += `
-                        <tr>
-                            <td>${player.number}</td>
-                            <td>${player.name}</td>
-                            <td>${player.position || '-'}</td>
-                        </tr>
-                    `;
-                });
-            }
-            
-            tableHTML += `
-                    </tbody>
-                </table>
-            `;
-            
-            rosterDisplay.innerHTML = tableHTML;
-        }
-
         window.onload = function () {
           initializeTeams();
-          generateMatches();
-          showTab('classification');
-          if (currentTab === 'admin') {
-            showAdminTab(currentAdminTab);
+          
+          // Remove duplicate declarations
+          const savedMatches = localStorage.getItem('matches');
+          if (savedMatches) {
+            matches = JSON.parse(savedMatches);
+          } else {
+            generateMatches();
           }
-          updateStandings();
-          displayMatches();
-          const savedWaitingList = localStorage.getItem('waitingList');
-          if (savedWaitingList) {
-            waitingList = JSON.parse(savedWaitingList);
+
+          const savedStandings = localStorage.getItem('standings');
+          if (savedStandings) {
+            standings = JSON.parse(savedStandings);
+          } else {
+            initializeTeams();
           }
-          const savedLicenses = localStorage.getItem('licenses');
-          if (savedLicenses) {
-            licenses = JSON.parse(savedLicenses);
-          }
-          if (currentTab === 'waiting-list') {
-            displayPublicWaitingList();
-          }
-          if (currentTab === 'licenses') {
-            displayPublicLicenses();
-          }
+
+          // Load other saved data
           if (localStorage.getItem('statuteContent')) {
             statuteContent = localStorage.getItem('statuteContent');
             const statuteDisplay = document.getElementById('statute-display');
@@ -2458,42 +2419,72 @@
             if (adminStatuteText) {
               adminStatuteText.value = statuteContent;
             }
-            const adminStatuteTextS = document.getElementById('admin-statute-text-s');
-            if (adminStatuteTextS) {
-              adminStatuteTextS.value = statuteContent;
-            }
+          }
+
+          const savedWaitingList = localStorage.getItem('waitingList');
+          if (savedWaitingList) {
+            waitingList = JSON.parse(savedWaitingList);
+          }
+
+          const savedLicenses = localStorage.getItem('licenses');
+          if (savedLicenses) {
+            licenses = JSON.parse(savedLicenses);
           }
 
           const savedTopScorers = localStorage.getItem('topScorers');
           if (savedTopScorers) {
             topScorers = JSON.parse(savedTopScorers);
           }
+
           const savedRosters = localStorage.getItem('teamRosters');
           if (savedRosters) {
             teamRosters = JSON.parse(savedRosters);
           }
+
           const savedPollVotes = localStorage.getItem('pollVotes');
           if (savedPollVotes) {
             pollVotes = JSON.parse(savedPollVotes);
           }
+
           const savedVotingStatus = localStorage.getItem('isVotingEnabled');
           if (savedVotingStatus !== null) {
             isVotingEnabled = JSON.parse(savedVotingStatus);
           }
+
           const savedHasVoted = localStorage.getItem('hasVoted');
           if (savedHasVoted) {
             hasVoted = new Set(JSON.parse(savedHasVoted));
           }
-          if (currentTab === 'poll') {
-            displayPublicPoll();
-          }
+
           const savedProposals = localStorage.getItem('proposals');
           if (savedProposals) {
             proposals = JSON.parse(savedProposals);
           }
+
           const savedDemocracyVotes = localStorage.getItem('democracyVotes');
           if (savedDemocracyVotes) {
             democracyVotes = JSON.parse(savedDemocracyVotes);
+          }
+
+          // Update displays
+          showTab('classification');
+          updateStandings();
+          displayMatches();
+          
+          if (currentTab === 'waiting-list') {
+            displayPublicWaitingList();
+          }
+          if (currentTab === 'licenses') {
+            displayPublicLicenses();
+          }
+          if (currentTab === 'poll') {
+            displayPublicPoll();
+          }
+          if (currentTab === 'statistics') {
+            displayStatistics();
+          }
+          if (currentTab === 'admin') {
+            showAdminTab(currentAdminTab);
           }
         };
     </script>
@@ -2559,6 +2550,7 @@
 
         <div id="statistics" class="tab-content" style="display: none;">
             <h2>Estatísticas</h2>
+            <div id="statistics"></div>
         </div>
 
         <div id="poll" class="tab-content" style="display: none;">
@@ -2573,7 +2565,6 @@
                 <div class="poll-form">
                     <select id="poll-team-public" onchange="updatePlayersListPublic()">
                         <option value="">Selecione o Time</option>
-                        ${teams.map(team => `<option value="${team}">${team}</option>`).join('')}
                     </select>
                     <select id="poll-player-public">
                         <option value="">Selecione o Jogador</option>
@@ -2592,8 +2583,7 @@
                             <th>Votos</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        ${getPollResults()}
+                    <tbody id="poll-results-tbody">
                     </tbody>
                 </table>
             </div>
@@ -2629,7 +2619,21 @@
 
         <div id="teams" class="tab-content" style="display: none;">
             <h2>Times</h2>
-            <!-- Team roster content will be generated dynamically -->
+            <div class="team-roster">
+                <h3>Plantel do Time</h3>
+                <table class="roster-table">
+                    <thead>
+                        <tr>
+                            <th>Jogador</th>
+                            <th>Posição</th>
+                            <th>Nº Camisa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Team roster content will go here -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </body>
