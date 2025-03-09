@@ -1,4 +1,14 @@
 <html>
+    <!-- Adicione isso no HEAD -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Substitua pelos seus dados do Passo 3
+  const SUPABASE_URL = 'https://dbxtwbcwjbafoismhqsg.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRieHR3YmN3amJhZm9pc21ocXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0NzcyODUsImV4cCI6MjA1NzA1MzI4NX0.xvZpSaXmSFgvJfiJIY5t8phXRDDcMYVK3nVt0v9KkBQ';
+  
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+    
 <head>
     <base href=".">
     <style>
