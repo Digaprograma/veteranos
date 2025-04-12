@@ -1,4 +1,14 @@
-<html><head><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+<html>
+<!-- Adicione isso no HEAD -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Substitua pelos seus dados do Passo 3
+  const SUPABASE_URL = 'https://dbxtwbcwjbafoismhqsg.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRieHR3YmN3amJhZm9pc21ocXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0NzcyODUsImV4cCI6MjA1NzA1MzI4NX0.xvZpSaXmSFgvJfiJIY5t8phXRDDcMYVK3nVt0v9KkBQ';
+  
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+<head><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
 const SUPABASE_URL = 'https://dbxtwbcwjbafoismhqsg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRieHR3YmN3amJhZm9pc21ocXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0NzcyODUsImV4cCI6MjA1NzA1MzI4NX0.xvZpSaXmSFgvJfiJIY5t8phXRDDcMYVK3nVt0v9KkBQ';
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -2492,17 +2502,6 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         };
     </script>
 </head>
-<!-- Adicione isso no HEAD -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  // Substitua pelos seus dados do Passo 3
-  const SUPABASE_URL = 'https://dbxtwbcwjbafoismhqsg.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRieHR3YmN3amJhZm9pc21ocXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0NzcyODUsImV4cCI6MjA1NzA1MzI4NX0.xvZpSaXmSFgvJfiJIY5t8phXRDDcMYVK3nVt0v9KkBQ';
-  
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-</script>
-
-
 <body>
 <div class="container">
 <h1>VETERANOS GRÊMIO MINEIRO</h1>
@@ -2640,56 +2639,53 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </div>
 </div>
 <script>
+let waitingList = [];
+
 async function addToWaitingList() {
-  const nameInput = document.getElementById('new-player-name');
-  const name = nameInput.value.trim();
-  if (name) {
-    const { data, error } = await supabase
-      .from('lista_espera')
-      .insert([{ nome: name }]);
+  const input = document.getElementById('new-player-name') || document.getElementById('new-player-name-wl');
+  const name = input.value.trim();
+  if (!name) return;
 
-    if (error) {
-      alert('Erro ao salvar: ' + error.message);
-      return;
-    }
-
-    nameInput.value = '';
-    showSaveFeedback();
-    loadWaitingList();
+  const { error } = await supabase.from('lista_espera').insert([{ nome: name }]);
+  if (error) {
+    alert('Erro ao salvar: ' + error.message);
+    return;
   }
+
+  input.value = '';
+  loadWaitingList();
 }
 
 async function removeFromWaitingList(index) {
   const nome = waitingList[index];
-  const { error } = await supabase
-    .from('lista_espera')
-    .delete()
-    .eq('nome', nome);
-
+  const { error } = await supabase.from('lista_espera').delete().eq('nome', nome);
   if (error) {
     alert('Erro ao remover: ' + error.message);
     return;
   }
-
   loadWaitingList();
-  showSaveFeedback();
 }
 
 async function loadWaitingList() {
-  const { data, error } = await supabase
-    .from('lista_espera')
-    .select('*');
-
+  const { data, error } = await supabase.from('lista_espera').select('*');
   if (error) {
-    alert('Erro ao carregar a lista: ' + error.message);
+    alert('Erro ao carregar: ' + error.message);
     return;
   }
-
-  waitingList = data.map(item => item.nome);
+  waitingList = data.map(i => i.nome);
   updateWaitingListTable();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadWaitingList();
-});
-</script></body></html>
+function updateWaitingListTable() {
+  const tbody = document.getElementById('waiting-list-tbody') || document.getElementById('waiting-list-tbody-wl');
+  if (!tbody) return;
+  tbody.innerHTML = waitingList.map((player, index) => `
+    <tr>
+      <td>${player}</td>
+      <td><button onclick="removeFromWaitingList(${index})">Remover</button></td>
+    </tr>`).join('');
+}
+
+document.addEventListener('DOMContentLoaded', loadWaitingList);
+</script></body>
+</html>
