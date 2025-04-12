@@ -1,17 +1,10 @@
-<html>
-    <!-- Adicione isso no HEAD -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  // Substitua pelos seus dados do Passo 3
-  const SUPABASE_URL = 'https://dbxtwbcwjbafoismhqsg.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRieHR3YmN3amJhZm9pc21ocXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0NzcyODUsImV4cCI6MjA1NzA1MzI4NX0.xvZpSaXmSFgvJfiJIY5t8phXRDDcMYVK3nVt0v9KkBQ';
-  
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<html><head><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+const SUPABASE_URL = 'https://dbxtwbcwjbafoismhqsg.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRieHR3YmN3amJhZm9pc21ocXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0NzcyODUsImV4cCI6MjA1NzA1MzI4NX0.xvZpSaXmSFgvJfiJIY5t8phXRDDcMYVK3nVt0v9KkBQ';
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </script>
-    
-<head>
-    <base href=".">
-    <style>
+<base href="."/>
+<style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -748,8 +741,8 @@
             color: #f44336;
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
         let currentTab = 'classification';
         const teams = ['Itália', 'Portugal', 'Holanda', 'Espanha'];
         let standings = {};
@@ -2499,152 +2492,204 @@
         };
     </script>
 </head>
+<!-- Adicione isso no HEAD -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Substitua pelos seus dados do Passo 3
+  const SUPABASE_URL = 'https://dbxtwbcwjbafoismhqsg.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRieHR3YmN3amJhZm9pc21ocXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0NzcyODUsImV4cCI6MjA1NzA1MzI4NX0.xvZpSaXmSFgvJfiJIY5t8phXRDDcMYVK3nVt0v9KkBQ';
+  
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+
+
 <body>
-    <div class="container">
-        <h1>VETERANOS GRÊMIO MINEIRO</h1>
+<div class="container">
+<h1>VETERANOS GRÊMIO MINEIRO</h1>
+<div class="tabs">
+<button class="tab" onclick="showTab('classification')">Classificação</button>
+<button class="tab" onclick="showTab('matches')">Confrontos</button>
+<button class="tab" onclick="showTab('statute')">Estatuto</button>
+<button class="tab" onclick="showTab('waiting-list')">Lista de Espera</button>
+<button class="tab" onclick="showTab('licenses')">Licenças</button>
+<button class="tab" onclick="showTab('statistics')">Estatísticas</button>
+<button class="tab" onclick="showTab('poll')">Melhor Jogador</button>
+<button class="tab" onclick="showTab('democracy')">Democracia</button>
+<button class="tab" onclick="showTab('admin')">Administrador</button>
+<button class="tab" onclick="showTab('teams')">Times</button>
+</div>
+<div class="tab-content" id="classification">
+<h2>Classificação</h2>
+<table id="standings-table"></table>
+</div>
+<div class="tab-content" id="matches" style="display: none;">
+<h2>Confrontos</h2>
+<div class="matches"></div>
+</div>
+<div class="tab-content" id="statute" style="display: none;">
+<h2>Estatuto</h2>
+<div id="statute-content">
+<div class="statute-controls">
+<button class="statute-button download-button" onclick="downloadStatute()">Baixar PDF</button>
+</div>
+<div id="statute-display"></div>
+</div>
+</div>
+<div class="tab-content" id="waiting-list" style="display: none;">
+<h2>Lista de Espera</h2>
+</div>
+<div class="tab-content" id="licenses" style="display: none;">
+<h2>Licenças</h2>
+<div class="licenses-display">
+<table class="licenses-table">
+<thead>
+<tr>
+<th>Nome</th>
+<th>Time</th>
+<th>Início</th>
+<th>Fim</th>
+</tr>
+</thead>
+<tbody id="public-licenses-tbody">
+</tbody>
+</table>
+</div>
+</div>
+<div class="tab-content" id="statistics" style="display: none;">
+<h2>Estatísticas</h2>
+<div id="statistics"></div>
+</div>
+<div class="tab-content" id="poll" style="display: none;">
+<h2>Melhor Jogador</h2>
+<div class="poll-login-form">
+<h4>Login para Votação</h4>
+<input id="player-name" placeholder="Seu nome" type="text"/>
+<input id="player-number" maxlength="4" placeholder="Senha" type="password"/>
+<button class="poll-button" onclick="playerLogin()">Entrar</button>
+</div>
+<div id="vote-form" style="display: none;">
+<div class="poll-form">
+<select id="poll-team-public" onchange="updatePlayersListPublic()">
+<option value="">Selecione o Time</option>
+</select>
+<select id="poll-player-public">
+<option value="">Selecione o Jogador</option>
+</select>
+<button class="poll-button" onclick="submitPlayerVote()">Votar</button>
+</div>
+<div class="vote-feedback" id="vote-feedback"></div>
+</div>
+<div class="poll-results-public">
+<h4>Resultados Parciais</h4>
+<table class="poll-results-table">
+<thead>
+<tr>
+<th>Time</th>
+<th>Jogador</th>
+<th>Votos</th>
+</tr>
+</thead>
+<tbody id="poll-results-tbody">
+</tbody>
+</table>
+</div>
+</div>
+<div class="tab-content" id="democracy" style="display: none;">
+<h2>Democracia</h2>
+<div class="democracy-container">
+<div class="democracy-section">
+<h3>Login para Votação</h3>
+<div class="poll-login-form">
+<input id="democracy-player-name" placeholder="Seu nome" type="text"/>
+<input id="democracy-player-password" maxlength="4" placeholder="Senha" type="password"/>
+<button class="poll-button" onclick="democracyLogin()">Entrar</button>
+</div>
+</div>
+</div>
+</div>
+<div class="tab-content" id="admin" style="display: none;">
+<div class="admin-login" id="admin-login-form">
+<h2>Login Administrador</h2>
+<div class="form-group">
+<label for="admin-password">Senha:</label>
+<input class="password-input" id="admin-password" type="password"/>
+</div>
+<button onclick="adminLogin()">Entrar</button>
+</div>
+<div id="admin-content" style="display: none;">
+<!-- admin content here -->
+</div>
+</div>
+<div class="tab-content" id="teams" style="display: none;">
+<h2>Times</h2>
+<div class="team-roster">
+<h3>Plantel do Time</h3>
+<table class="roster-table">
+<thead>
+<tr>
+<th>Jogador</th>
+<th>Posição</th>
+<th>Nº Camisa</th>
+</tr>
+</thead>
+<tbody>
+<!-- Team roster content will go here -->
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<script>
+async function addToWaitingList() {
+  const nameInput = document.getElementById('new-player-name');
+  const name = nameInput.value.trim();
+  if (name) {
+    const { data, error } = await supabase
+      .from('lista_espera')
+      .insert([{ nome: name }]);
 
-        <div class="tabs">
-            <button class="tab" onclick="showTab('classification')">Classificação</button>
-            <button class="tab" onclick="showTab('matches')">Confrontos</button>
-            <button class="tab" onclick="showTab('statute')">Estatuto</button>
-            <button class="tab" onclick="showTab('waiting-list')">Lista de Espera</button>
-            <button class="tab" onclick="showTab('licenses')">Licenças</button>
-            <button class="tab" onclick="showTab('statistics')">Estatísticas</button>
-            <button class="tab" onclick="showTab('poll')">Melhor Jogador</button>
-            <button class="tab" onclick="showTab('democracy')">Democracia</button>
-            <button class="tab" onclick="showTab('admin')">Administrador</button>
-            <button class="tab" onclick="showTab('teams')">Times</button>
-        </div>
+    if (error) {
+      alert('Erro ao salvar: ' + error.message);
+      return;
+    }
 
-        <div id="classification" class="tab-content">
-            <h2>Classificação</h2>
-            <table id="standings-table"></table>
-        </div>
+    nameInput.value = '';
+    showSaveFeedback();
+    loadWaitingList();
+  }
+}
 
-        <div id="matches" class="tab-content" style="display: none;">
-            <h2>Confrontos</h2>
-            <div class="matches"></div>
-        </div>
+async function removeFromWaitingList(index) {
+  const nome = waitingList[index];
+  const { error } = await supabase
+    .from('lista_espera')
+    .delete()
+    .eq('nome', nome);
 
-        <div id="statute" class="tab-content" style="display: none;">
-            <h2>Estatuto</h2>
-            <div id="statute-content">
-                <div class="statute-controls">
-                    <button class="statute-button download-button" onclick="downloadStatute()">Baixar PDF</button>
-                </div>
-                <div id="statute-display"></div>
-            </div>
-        </div>
+  if (error) {
+    alert('Erro ao remover: ' + error.message);
+    return;
+  }
 
-        <div id="waiting-list" class="tab-content" style="display: none;">
-            <h2>Lista de Espera</h2>
-        </div>
+  loadWaitingList();
+  showSaveFeedback();
+}
 
-        <div id="licenses" class="tab-content" style="display: none;">
-            <h2>Licenças</h2>
-            <div class="licenses-display">
-                <table class="licenses-table">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Time</th>
-                            <th>Início</th>
-                            <th>Fim</th>
-                        </tr>
-                    </thead>
-                    <tbody id="public-licenses-tbody">
-                    </tbody>
-                </table>
-            </div>
-        </div>
+async function loadWaitingList() {
+  const { data, error } = await supabase
+    .from('lista_espera')
+    .select('*');
 
-        <div id="statistics" class="tab-content" style="display: none;">
-            <h2>Estatísticas</h2>
-            <div id="statistics"></div>
-        </div>
+  if (error) {
+    alert('Erro ao carregar a lista: ' + error.message);
+    return;
+  }
 
-        <div id="poll" class="tab-content" style="display: none;">
-            <h2>Melhor Jogador</h2>
-            <div class="poll-login-form">
-                <h4>Login para Votação</h4>
-                <input type="text" id="player-name" placeholder="Seu nome">
-                <input type="password" id="player-number" placeholder="Senha" maxlength="4">
-                <button class="poll-button" onclick="playerLogin()">Entrar</button>
-            </div>
-            <div id="vote-form" style="display: none;">
-                <div class="poll-form">
-                    <select id="poll-team-public" onchange="updatePlayersListPublic()">
-                        <option value="">Selecione o Time</option>
-                    </select>
-                    <select id="poll-player-public">
-                        <option value="">Selecione o Jogador</option>
-                    </select>
-                    <button class="poll-button" onclick="submitPlayerVote()">Votar</button>
-                </div>
-                <div id="vote-feedback" class="vote-feedback"></div>
-            </div>
-            <div class="poll-results-public">
-                <h4>Resultados Parciais</h4>
-                <table class="poll-results-table">
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Jogador</th>
-                            <th>Votos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="poll-results-tbody">
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  waitingList = data.map(item => item.nome);
+  updateWaitingListTable();
+}
 
-        <div id="democracy" class="tab-content" style="display: none;">
-            <h2>Democracia</h2>
-            <div class="democracy-container">
-                <div class="democracy-section">
-                    <h3>Login para Votação</h3>
-                    <div class="poll-login-form">
-                        <input type="text" id="democracy-player-name" placeholder="Seu nome">
-                        <input type="password" id="democracy-player-password" placeholder="Senha" maxlength="4">
-                        <button class="poll-button" onclick="democracyLogin()">Entrar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="admin" class="tab-content" style="display: none;">
-            <div id="admin-login-form" class="admin-login">
-                <h2>Login Administrador</h2>
-                <div class="form-group">
-                    <label for="admin-password">Senha:</label>
-                    <input type="password" id="admin-password" class="password-input">
-                </div>
-                <button onclick="adminLogin()">Entrar</button>
-            </div>
-            <div id="admin-content" style="display: none;">
-                <!-- admin content here -->
-            </div>
-        </div>
-
-        <div id="teams" class="tab-content" style="display: none;">
-            <h2>Times</h2>
-            <div class="team-roster">
-                <h3>Plantel do Time</h3>
-                <table class="roster-table">
-                    <thead>
-                        <tr>
-                            <th>Jogador</th>
-                            <th>Posição</th>
-                            <th>Nº Camisa</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Team roster content will go here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+document.addEventListener('DOMContentLoaded', () => {
+  loadWaitingList();
+});
+</script></body></html>
