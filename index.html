@@ -2624,6 +2624,52 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 <div class="team-roster">
 <h3>Plantel do Time</h3>
 <table class="roster-table">
+<!-- Cadastrar jogador dentro da aba administrador, aba times -->
+<div class="teams-admin">
+  <div class="team-roster">
+    <h3>Cadastrar Novo Jogador</h3>
+    <input type="text" id="nome" placeholder="Nome do jogador"><br><br>
+    <input type="number" id="numero" placeholder="Número do jogador"><br><br>
+    <select id="time">
+      <option value="Itália">Itália</option>
+      <option value="Portugal">Portugal</option>
+      <option value="Holanda">Holanda</option>
+      <option value="Espanha">Espanha</option>
+    </select><br><br>
+    <button onclick="adicionarJogador()">Cadastrar</button>
+  </div>
+</div>
+
+<!-- Script para cadastrar jogador no Supabase -->
+<script>
+async function adicionarJogador() {
+  const nome = document.getElementById("nome").value;
+  const numero = parseInt(document.getElementById("numero").value);
+  const time = document.getElementById("time").value;
+
+  if (!nome || !numero || !time) {
+    alert("Preencha todos os campos!");
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("jogadores")
+    .insert([{ nome, numero, time }]);
+
+  if (error) {
+    alert("Erro ao salvar: " + error.message);
+    console.error(error);
+  } else {
+    alert("Jogador cadastrado com sucesso!");
+    document.getElementById("nome").value = '';
+    document.getElementById("numero").value = '';
+    document.getElementById("time").value = '';
+  }
+}
+</script>
+
+
+  
 <thead>
 <tr>
 <th>Jogador</th>
