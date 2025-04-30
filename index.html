@@ -1,20 +1,7 @@
 <html>
-<!-- Adicione isso no HEAD -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  // Substitua pelos seus dados do Passo 3
-  const SUPABASE_URL = 'https://dbxtwbcwjbafoismhqsg.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRieHR3YmN3amJhZm9pc21ocXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0NzcyODUsImV4cCI6MjA1NzA1MzI4NX0.xvZpSaXmSFgvJfiJIY5t8phXRDDcMYVK3nVt0v9KkBQ';
-  
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-</script>
-<head><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
-const SUPABASE_URL = 'https://dbxtwbcwjbafoismhqsg.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRieHR3YmN3amJhZm9pc21ocXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0NzcyODUsImV4cCI6MjA1NzA1MzI4NX0.xvZpSaXmSFgvJfiJIY5t8phXRDDcMYVK3nVt0v9KkBQ';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-</script>
-<base href="."/>
-<style>
+<head>
+    <base href=".">
+    <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -161,7 +148,7 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
         .save-feedback {
-            position: sticky;
+            position: fixed;
             bottom: 20px;
             right: 20px;
             background: #4CAF50;
@@ -751,8 +738,8 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             color: #f44336;
         }
     </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
         let currentTab = 'classification';
         const teams = ['Itália', 'Portugal', 'Holanda', 'Espanha'];
         let standings = {};
@@ -786,22 +773,26 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
           'Itália': Array(20).fill().map(() => ({
             name: '',
             number: '',
-            password: ''
+            password: '',
+            position: ''
           })),
           'Portugal': Array(20).fill().map(() => ({
             name: '',
             number: '',
-            password: ''
+            password: '',
+            position: ''
           })),
           'Holanda': Array(20).fill().map(() => ({
             name: '',
             number: '',
-            password: ''
+            password: '',
+            position: ''
           })),
           'Espanha': Array(20).fill().map(() => ({
             name: '',
             number: '',
-            password: ''
+            password: '',
+            position: ''
           }))
         };
         let pollVotes = [];
@@ -950,8 +941,8 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
           if (tabName === 'democracy') {
             displayDemocracy();
           }
-          if (tabName === 'statistics') {
-            displayStatistics();
+          if (tabName === 'teams') {
+            displayPublicTeamRosters();
           }
         }
         function adminLogin() {
@@ -1256,23 +1247,19 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         function updateMatchDate(index, date) {
           matches[index].date = date;
           updateStandings();
-          localStorage.setItem('matches', JSON.stringify(matches));
         }
         function updateMatchTime(index, time) {
           matches[index].time = time;
           updateStandings();
-          localStorage.setItem('matches', JSON.stringify(matches));
         }
         function updateScore(index, field, value) {
           matches[index][field] = parseInt(value) || null;
           updateStandings();
-          localStorage.setItem('matches', JSON.stringify(matches));
           showSaveFeedback();
         }
         function updateCards(index, field, value) {
           matches[index][field] = parseInt(value) || 0;
           updateStandings();
-          localStorage.setItem('matches', JSON.stringify(matches));
           showSaveFeedback();
         }
         function updateStandings() {
@@ -1307,8 +1294,6 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
               }
             }
           });
-          localStorage.setItem('standings', JSON.stringify(standings));
-          localStorage.setItem('matches', JSON.stringify(matches));
           displayStandings();
         }
         function displayStandings() {
@@ -1387,10 +1372,6 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
         function resetChampionship() {
           if (confirm('Tem certeza que deseja reiniciar o campeonato? Todos os resultados serão apagados.')) {
-            // Clear saved data
-            localStorage.removeItem('standings');
-            localStorage.removeItem('matches');
-            
             initializeTeams();
             generateMatches();
             updateStandings();
@@ -1649,84 +1630,7 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                     </div>
                 `;
           if (tabName === 'statistics') {
-            const statisticsAdmin = document.querySelector('.statistics-admin');
-            statisticsAdmin.innerHTML = `
-                <div class="statistics-section">
-                    <h3>Artilheiros por Time</h3>
-                    <table class="statistics-table">
-                        <thead>
-                            <tr>
-                                <th>Time</th>
-                                <th>Jogador</th>
-                                <th>Gols</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${Object.entries(topScorers).map(([team, scorer]) => `
-                                <tr>
-                                    <td>${team}</td>
-                                    <td>
-                                        <input type="text" 
-                                               value="${scorer.name || ''}"
-                                               onchange="updateTopScorer('${team}', 'name', this.value)">
-                                    </td>
-                                    <td>
-                                        <input type="number" 
-                                               value="${scorer.goals || 0}"
-                                               onchange="updateTopScorer('${team}', 'goals', this.value)">
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="statistics-section">
-                    <h3>Probabilidade de Título</h3>
-                    <table class="statistics-table">
-                        <thead>
-                            <tr>
-                                <th>Time</th>
-                                <th>Probabilidade</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${Object.entries(calculateChampionshipProbability())
-                                .sort(([, a], [, b]) => b - a)
-                                .map(([team, probability]) => `
-                                    <tr>
-                                        <td>${team}</td>
-                                        <td>${probability}%</td>
-                                    </tr>
-                                `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="statistics-section">
-                    <h3>Cartões</h3>
-                    <table class="statistics-table">
-                        <thead>
-                            <tr>
-                                <th>Time</th>
-                                <th>Cartões Amarelos</th>
-                                <th>Cartões Vermelhos</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${Object.entries(standings)
-                                .sort(([, a], [, b]) => (b.yellowCards + b.redCards*2) - (a.yellowCards + a.redCards*2))
-                                .map(([team, stats]) => `
-                                    <tr>
-                                        <td>${team}</td>
-                                        <td>${stats.yellowCards}</td>
-                                        <td>${stats.redCards}</td>
-                                    </tr>
-                                `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+            updateStatistics();
           }
           if (tabName === 'poll') {
             displayPollAdmin();
@@ -1797,81 +1701,68 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
           });
           return probabilities;
         }
-        function displayStatistics() {
-          const statisticsDiv = document.getElementById('statistics');
+        function updateStatistics() {
+          const statisticsDiv = document.querySelector('#admin-statistics .statistics-admin');
           const probabilities = calculateChampionshipProbability();
           let html = `
-              <div class="statistics-section">
-                  <h3>Probabilidade de Título</h3>
-                  <table class="statistics-table">
-                      <thead>
-                          <tr>
-                              <th>Time</th>
-                              <th>Probabilidade</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          ${Object.entries(probabilities)
-                              .sort(([, a], [, b]) => b - a)
-                              .map(([team, probability]) => `
-                                  <tr>
-                                      <td>${team}</td>
-                                      <td>${probability}%</td>
-                                  </tr>
-                              `).join('')}
-                      </tbody>
-                  </table>
-              </div>
-              
-              <div class="statistics-section">
-                  <h3>Artilheiros por Time</h3>
-                  <table class="statistics-table">
-                      <thead>
-                          <tr>
-                              <th>Time</th>
-                              <th>Jogador</th>
-                              <th>Gols</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          ${Object.entries(topScorers)
-                              .sort(([, a], [, b]) => b.goals - a.goals)
-                              .map(([team, scorer]) => `
-                                  <tr>
-                                      <td>${team}</td>
-                                      <td>${scorer.name || '-'}</td>
-                                      <td>${scorer.goals || 0}</td>
-                                  </tr>
-                              `).join('')}
-                      </tbody>
-                  </table>
-              </div>
-              
-              <div class="statistics-section">
-                  <h3>Cartões</h3>
-                  <table class="statistics-table">
-                      <thead>
-                          <tr>
-                              <th>Time</th>
-                              <th>Cartões Amarelos</th>
-                              <th>Cartões Vermelhos</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          ${Object.entries(standings)
-                              .sort(([, a], [, b]) => (b.yellowCards + b.redCards*2) - (a.yellowCards + a.redCards*2))
-                              .map(([team, stats]) => `
-                                  <tr>
-                                      <td>${team}</td>
-                                      <td>${stats.yellowCards}</td>
-                                      <td>${stats.redCards}</td>
-                                  </tr>
-                              `).join('')}
-                      </tbody>
-                  </table>
-              </div>
-          `;
-          
+                    <div class="statistics-section">
+                        <h4>Probabilidade de Título</h4>
+                        <table class="statistics-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Probabilidade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+          Object.entries(probabilities).sort(([, a], [, b]) => b - a).forEach(([team, probability]) => {
+            html += `
+                            <tr>
+                                <td>${team}</td>
+                                <td>${probability}%</td>
+                            </tr>
+                        `;
+          });
+          html += `
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="statistics-section">
+                        <h4>Artilheiros por Time</h4>
+                        <table class="statistics-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Jogador</th>
+                                    <th>Gols</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+          Object.entries(topScorers).forEach(([team, scorer]) => {
+            html += `
+                    <tr>
+                        <td>${team}</td>
+                        <td>
+                            <input type="text" 
+                                   value="${scorer.name}" 
+                                   onchange="updateTopScorer('${team}', 'name', this.value)">
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   min="0" 
+                                   value="${scorer.goals}"
+                                   onchange="updateTopScorer('${team}', 'goals', this.value)">
+                        </td>
+                    </tr>
+                `;
+          });
+          html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
           statisticsDiv.innerHTML = html;
         }
         function updateTopScorer(team, field, value) {
@@ -1894,6 +1785,7 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                     <tr>
                       <th>Número</th>
                       <th>Nome do Atleta</th>
+                      <th>Posição</th>
                       <th>Senha</th>
                     </tr>
                   </thead>
@@ -1911,6 +1803,17 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                           <input type="text" 
                                  value="${player.name}"
                                  onchange="updateRoster('${team}', ${index}, 'name', this.value)">
+                        </td>
+                        <td>
+                          <select onchange="updateRoster('${team}', ${index}, 'position', this.value)">
+                            <option value="" ${!player.position ? 'selected' : ''}>Selecione</option>
+                            <option value="Goleiro" ${player.position === 'Goleiro' ? 'selected' : ''}>Goleiro</option>
+                            <option value="Zagueiro" ${player.position === 'Zagueiro' ? 'selected' : ''}>Zagueiro</option>
+                            <option value="Lateral" ${player.position === 'Lateral' ? 'selected' : ''}>Lateral</option>
+                            <option value="Volante" ${player.position === 'Volante' ? 'selected' : ''}>Volante</option>
+                            <option value="Meio-Campo" ${player.position === 'Meio-Campo' ? 'selected' : ''}>Meio-Campo</option>
+                            <option value="Atacante" ${player.position === 'Atacante' ? 'selected' : ''}>Atacante</option>
+                          </select>
                         </td>
                         <td>
                           <input type="text"
@@ -2098,6 +2001,7 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                     <div class="poll-form">
                         <select id="poll-team-public" onchange="updatePlayersListPublic()">
                             <option value="">Selecione o Time</option>
+                            ${teams.map(team => `<option value="${team}">${team}</option>`).join('')}
                         </select>
                         <select id="poll-player-public">
                             <option value="">Selecione o Jogador</option>
@@ -2291,7 +2195,8 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                             <div class="proposal-title">${proposal.title}</div>
                             <div class="proposal-description">${proposal.description}</div>
                             <div class="proposal-meta">
-                                <span class="proposal-date">Proposto em: ${proposal.date}</span>
+                                <span>Data: ${proposal.date}</span>
+                                <span>Prazo: ${proposal.deadline}</span>
                                 <span class="proposal-status status-${proposal.status}">${proposal.status.toUpperCase()}</span>
                             </div>
                             ${votingButtons}
@@ -2403,289 +2308,242 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             }
         }
 
-        window.onload = function () {
-          initializeTeams();
+        function displayPublicTeamRosters() {
+          const teamsDiv = document.getElementById('teams');
+          teamsDiv.innerHTML = '<h2>Times</h2>';
           
-          // Remove duplicate declarations
-          const savedMatches = localStorage.getItem('matches');
-          if (savedMatches) {
-            matches = JSON.parse(savedMatches);
-          } else {
-            generateMatches();
-          }
-
-          const savedStandings = localStorage.getItem('standings');
-          if (savedStandings) {
-            standings = JSON.parse(savedStandings);
-          } else {
-            initializeTeams();
-          }
-
-          // Load other saved data
-          if (localStorage.getItem('statuteContent')) {
-            statuteContent = localStorage.getItem('statuteContent');
-            const statuteDisplay = document.getElementById('statute-display');
-            if (statuteDisplay) {
-              statuteDisplay.innerHTML = statuteContent.replace(/\n/g, '<br>');
+          teams.forEach(team => {
+            const teamPlayers = teamRosters[team].filter(player => player.name); // Only show players with names
+            if (teamPlayers.length > 0) {
+              const teamSection = document.createElement('div');
+              teamSection.className = 'team-roster';
+              teamSection.innerHTML = `
+                <h3>${team}</h3>
+                <table class="roster-table">
+                  <thead>
+                    <tr>
+                      <th>Nº Camisa</th>
+                      <th>Nome do Atleta</th>
+                      <th>Posição</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${teamPlayers
+                      .sort((a, b) => (parseInt(a.number) || 0) - (parseInt(b.number) || 0))
+                      .map(player => `
+                        <tr>
+                          <td>${player.number || '-'}</td>
+                          <td>${player.name}</td>
+                          <td>${player.position || '-'}</td>
+                        </tr>
+                      `).join('')}
+                  </tbody>
+                </table>
+              `;
+              teamsDiv.appendChild(teamSection);
             }
-            const adminStatuteText = document.getElementById('admin-statute-text');
-            if (adminStatuteText) {
-              adminStatuteText.value = statuteContent;
-            }
-          }
+          });
+        }
 
+        window.onload = function() {
+          initializeTeams();
+          generateMatches();
+          showTab('classification');
+          if (currentTab === 'admin') {
+            showAdminTab(currentAdminTab);
+          }
+          updateStandings();
+          displayMatches();
           const savedWaitingList = localStorage.getItem('waitingList');
           if (savedWaitingList) {
             waitingList = JSON.parse(savedWaitingList);
           }
-
           const savedLicenses = localStorage.getItem('licenses');
           if (savedLicenses) {
             licenses = JSON.parse(savedLicenses);
           }
-
-          const savedTopScorers = localStorage.getItem('topScorers');
-          if (savedTopScorers) {
-            topScorers = JSON.parse(savedTopScorers);
-          }
-
-          const savedRosters = localStorage.getItem('teamRosters');
-          if (savedRosters) {
-            teamRosters = JSON.parse(savedRosters);
-          }
-
-          const savedPollVotes = localStorage.getItem('pollVotes');
-          if (savedPollVotes) {
-            pollVotes = JSON.parse(savedPollVotes);
-          }
-
-          const savedVotingStatus = localStorage.getItem('isVotingEnabled');
-          if (savedVotingStatus !== null) {
-            isVotingEnabled = JSON.parse(savedVotingStatus);
-          }
-
-          const savedHasVoted = localStorage.getItem('hasVoted');
-          if (savedHasVoted) {
-            hasVoted = new Set(JSON.parse(savedHasVoted));
-          }
-
-          const savedProposals = localStorage.getItem('proposals');
-          if (savedProposals) {
-            proposals = JSON.parse(savedProposals);
-          }
-
-          const savedDemocracyVotes = localStorage.getItem('democracyVotes');
-          if (savedDemocracyVotes) {
-            democracyVotes = JSON.parse(savedDemocracyVotes);
-          }
-
-          // Update displays
-          showTab('classification');
-          updateStandings();
-          displayMatches();
-          
           if (currentTab === 'waiting-list') {
             displayPublicWaitingList();
           }
           if (currentTab === 'licenses') {
             displayPublicLicenses();
           }
+          if (localStorage.getItem('statuteContent')) {
+            statuteContent = localStorage.getItem('statuteContent');
+            document.getElementById('statute-display').innerHTML = statuteContent.replace(/\n/g, '<br>');
+            if (document.getElementById('admin-statute-text')) {
+              document.getElementById('admin-statute-text').value = statuteContent;
+            }
+          }
+          const savedTopScorers = localStorage.getItem('topScorers');
+          if (savedTopScorers) {
+            topScorers = JSON.parse(savedTopScorers);
+          }
+          const savedRosters = localStorage.getItem('teamRosters');
+          if (savedRosters) {
+            teamRosters = JSON.parse(savedRosters);
+          }
+          const savedPollVotes = localStorage.getItem('pollVotes');
+          if (savedPollVotes) {
+            pollVotes = JSON.parse(savedPollVotes);
+          }
+          const savedVotingStatus = localStorage.getItem('isVotingEnabled');
+          if (savedVotingStatus !== null) {
+            isVotingEnabled = JSON.parse(savedVotingStatus);
+          }
+          const savedHasVoted = localStorage.getItem('hasVoted');
+          if (savedHasVoted) {
+            hasVoted = new Set(JSON.parse(savedHasVoted));
+          }
           if (currentTab === 'poll') {
             displayPublicPoll();
           }
-          if (currentTab === 'statistics') {
-            displayStatistics();
+          const savedProposals = localStorage.getItem('proposals');
+          if (savedProposals) {
+            proposals = JSON.parse(savedProposals);
           }
-          if (currentTab === 'admin') {
-            showAdminTab(currentAdminTab);
+          const savedDemocracyVotes = localStorage.getItem('democracyVotes');
+          if (savedDemocracyVotes) {
+            democracyVotes = JSON.parse(savedDemocracyVotes);
+          }
+          if (currentTab === 'teams') {
+            displayPublicTeamRosters();
           }
         };
     </script>
 </head>
 <body>
-<div class="container">
-<h1>VETERANOS GRÊMIO MINEIRO</h1>
-<div class="tabs">
-<button class="tab" onclick="showTab('classification')">Classificação</button>
-<button class="tab" onclick="showTab('matches')">Confrontos</button>
-<button class="tab" onclick="showTab('statute')">Estatuto</button>
-<button class="tab" onclick="showTab('waiting-list')">Lista de Espera</button>
-<button class="tab" onclick="showTab('licenses')">Licenças</button>
-<button class="tab" onclick="showTab('statistics')">Estatísticas</button>
-<button class="tab" onclick="showTab('poll')">Melhor Jogador</button>
-<button class="tab" onclick="showTab('democracy')">Democracia</button>
-<button class="tab" onclick="showTab('admin')">Administrador</button>
-<button class="tab" onclick="showTab('teams')">Times</button>
-</div>
-<div class="tab-content" id="classification">
-<h2>Classificação</h2>
-<table id="standings-table"></table>
-</div>
-<div class="tab-content" id="matches" style="display: none;">
-<h2>Confrontos</h2>
-<div class="matches"></div>
-</div>
-<div class="tab-content" id="statute" style="display: none;">
-<h2>Estatuto</h2>
-<div id="statute-content">
-<div class="statute-controls">
-<button class="statute-button download-button" onclick="downloadStatute()">Baixar PDF</button>
-</div>
-<div id="statute-display"></div>
-</div>
-</div>
-<div class="tab-content" id="waiting-list" style="display: none;">
-<h2>Lista de Espera</h2>
-</div>
-<div class="tab-content" id="licenses" style="display: none;">
-<h2>Licenças</h2>
-<div class="licenses-display">
-<table class="licenses-table">
-<thead>
-<tr>
-<th>Nome</th>
-<th>Time</th>
-<th>Início</th>
-<th>Fim</th>
-</tr>
-</thead>
-<tbody id="public-licenses-tbody">
-</tbody>
-</table>
-</div>
-</div>
-<div class="tab-content" id="statistics" style="display: none;">
-<h2>Estatísticas</h2>
-<div id="statistics"></div>
-</div>
-<div class="tab-content" id="poll" style="display: none;">
-<h2>Melhor Jogador</h2>
-<div class="poll-login-form">
-<h4>Login para Votação</h4>
-<input id="player-name" placeholder="Seu nome" type="text"/>
-<input id="player-number" maxlength="4" placeholder="Senha" type="password"/>
-<button class="poll-button" onclick="playerLogin()">Entrar</button>
-</div>
-<div id="vote-form" style="display: none;">
-<div class="poll-form">
-<select id="poll-team-public" onchange="updatePlayersListPublic()">
-<option value="">Selecione o Time</option>
-</select>
-<select id="poll-player-public">
-<option value="">Selecione o Jogador</option>
-</select>
-<button class="poll-button" onclick="submitPlayerVote()">Votar</button>
-</div>
-<div class="vote-feedback" id="vote-feedback"></div>
-</div>
-<div class="poll-results-public">
-<h4>Resultados Parciais</h4>
-<table class="poll-results-table">
-<thead>
-<tr>
-<th>Time</th>
-<th>Jogador</th>
-<th>Votos</th>
-</tr>
-</thead>
-<tbody id="poll-results-tbody">
-</tbody>
-</table>
-</div>
-</div>
-<div class="tab-content" id="democracy" style="display: none;">
-<h2>Democracia</h2>
-<div class="democracy-container">
-<div class="democracy-section">
-<h3>Login para Votação</h3>
-<div class="poll-login-form">
-<input id="democracy-player-name" placeholder="Seu nome" type="text"/>
-<input id="democracy-player-password" maxlength="4" placeholder="Senha" type="password"/>
-<button class="poll-button" onclick="democracyLogin()">Entrar</button>
-</div>
-</div>
-</div>
-</div>
-<div class="tab-content" id="admin" style="display: none;">
-<div class="admin-login" id="admin-login-form">
-<h2>Login Administrador</h2>
-<div class="form-group">
-<label for="admin-password">Senha:</label>
-<input class="password-input" id="admin-password" type="password"/>
-</div>
-<button onclick="adminLogin()">Entrar</button>
-</div>
-<div id="admin-content" style="display: none;">
-<!-- admin content here -->
-</div>
-</div>
-<div class="tab-content" id="teams" style="display: none;">
-<h2>Times</h2>
-<div class="team-roster">
-<h3>Plantel do Time</h3>
-<table class="roster-table">
-<thead>
-<tr>
-<th>Jogador</th>
-<th>Posição</th>
-<th>Nº Camisa</th>
-</tr>
-</thead>
-<tbody>
-<!-- Team roster content will go here -->
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<script>
-let waitingList = [];
+    <div class="container">
+        <h1>VETERANOS GRÊMIO MINEIRO</h1>
 
-async function addToWaitingList() {
-  const input = document.getElementById('new-player-name') || document.getElementById('new-player-name-wl');
-  const name = input.value.trim();
-  if (!name) return;
+        <div class="tabs">
+            <button class="tab" onclick="showTab('classification')">Classificação</button>
+            <button class="tab" onclick="showTab('matches')">Confrontos</button>
+            <button class="tab" onclick="showTab('statute')">Estatuto</button>
+            <button class="tab" onclick="showTab('waiting-list')">Lista de Espera</button>
+            <button class="tab" onclick="showTab('licenses')">Licenças</button>
+            <button class="tab" onclick="showTab('statistics')">Estatísticas</button>
+            <button class="tab" onclick="showTab('poll')">Melhor Jogador</button>
+            <button class="tab" onclick="showTab('democracy')">Democracia</button>
+            <button class="tab" onclick="showTab('admin')">Administrador</button>
+            <button class="tab" onclick="showTab('teams')">Times</button>
+        </div>
 
-  const { error } = await supabase.from('lista_espera').insert([{ nome: name }]);
-  if (error) {
-    alert('Erro ao salvar: ' + error.message);
-    return;
-  }
+        <div id="classification" class="tab-content">
+            <h2>Classificação</h2>
+            <table id="standings-table"></table>
+        </div>
 
-  input.value = '';
-  loadWaitingList();
-}
+        <div id="matches" class="tab-content" style="display: none;">
+            <h2>Confrontos</h2>
+            <div class="matches"></div>
+        </div>
 
-async function removeFromWaitingList(index) {
-  const nome = waitingList[index];
-  const { error } = await supabase.from('lista_espera').delete().eq('nome', nome);
-  if (error) {
-    alert('Erro ao remover: ' + error.message);
-    return;
-  }
-  loadWaitingList();
-}
+        <div id="statute" class="tab-content" style="display: none;">
+            <h2>Estatuto</h2>
+            <div id="statute-content">
+                <div class="statute-controls">
+                    <button class="statute-button download-button" onclick="downloadStatute()">Baixar PDF</button>
+                </div>
+                <div id="statute-display"></div>
+            </div>
+        </div>
 
-async function loadWaitingList() {
-  const { data, error } = await supabase.from('lista_espera').select('*');
-  if (error) {
-    alert('Erro ao carregar: ' + error.message);
-    return;
-  }
-  waitingList = data.map(i => i.nome);
-  updateWaitingListTable();
-}
+        <div id="waiting-list" class="tab-content" style="display: none;">
+            <h2>Lista de Espera</h2>
+        </div>
 
-function updateWaitingListTable() {
-  const tbody = document.getElementById('waiting-list-tbody') || document.getElementById('waiting-list-tbody-wl');
-  if (!tbody) return;
-  tbody.innerHTML = waitingList.map((player, index) => `
-    <tr>
-      <td>${player}</td>
-      <td><button onclick="removeFromWaitingList(${index})">Remover</button></td>
-    </tr>`).join('');
-}
+        <div id="licenses" class="tab-content" style="display: none;">
+            <h2>Licenças</h2>
+            <div class="licenses-display">
+                <table class="licenses-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Time</th>
+                            <th>Início</th>
+                            <th>Fim</th>
+                        </tr>
+                    </thead>
+                    <tbody id="public-licenses-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-document.addEventListener('DOMContentLoaded', loadWaitingList);
-</script></body>
+        <div id="statistics" class="tab-content" style="display: none;">
+            <h2>Estatísticas</h2>
+        </div>
+
+        <div id="poll" class="tab-content" style="display: none;">
+            <h2>Melhor Jogador</h2>
+            <div class="poll-login-form">
+                <h4>Login para Votação</h4>
+                <input type="text" id="player-name" placeholder="Seu nome">
+                <input type="password" id="player-number" placeholder="Senha" maxlength="4">
+                <button class="poll-button" onclick="playerLogin()">Entrar</button>
+            </div>
+            <div id="vote-form" style="display: none;">
+                <div class="poll-form">
+                    <select id="poll-team-public" onchange="updatePlayersListPublic()">
+                        <option value="">Selecione o Time</option>
+                        ${teams.map(team => `<option value="${team}">${team}</option>`).join('')}
+                    </select>
+                    <select id="poll-player-public">
+                        <option value="">Selecione o Jogador</option>
+                    </select>
+                    <button class="poll-button" onclick="submitPlayerVote()">Votar</button>
+                </div>
+                <div id="vote-feedback" class="vote-feedback"></div>
+            </div>
+            <div class="poll-results-public">
+                <h4>Resultados Parciais</h4>
+                <table class="poll-results-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Jogador</th>
+                            <th>Votos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${getPollResults()}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="democracy" class="tab-content" style="display: none;">
+            <h2>Democracia</h2>
+            <div class="democracy-container">
+                <div class="democracy-section">
+                    <h3>Login para Votação</h3>
+                    <div class="poll-login-form">
+                        <input type="text" id="democracy-player-name" placeholder="Seu nome">
+                        <input type="password" id="democracy-player-password" placeholder="Senha" maxlength="4">
+                        <button class="poll-button" onclick="democracyLogin()">Entrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="admin" class="tab-content" style="display: none;">
+            <div id="admin-login-form" class="admin-login">
+                <h2>Login Administrador</h2>
+                <div class="form-group">
+                    <label for="admin-password">Senha:</label>
+                    <input type="password" id="admin-password" class="password-input">
+                </div>
+                <button onclick="adminLogin()">Entrar</button>
+            </div>
+            <div id="admin-content" style="display: none;">
+                <!-- admin content here -->
+            </div>
+        </div>
+
+        <div id="teams" class="tab-content" style="display: none;">
+            <h2>Times</h2>
+        </div>
+    </div>
+</body>
 </html>
