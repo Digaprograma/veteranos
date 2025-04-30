@@ -1,202 +1,1220 @@
-<!DOCTYPE html>
 <html>
 <head>
-  <title>Sistema de Torneio</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { border-collapse: collapse; margin-bottom: 20px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; }
-    button { cursor: pointer; }
-    .feedback {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #4CAF50;
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      z-index: 9999;
-    }
-  </style>
-  <script>
-    const SUPABASE_URL = 'https://dbxtwbcwjbafoismhqsg.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRieHR3YmN3amJhZm9pc21ocXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0NzcyODUsImV4cCI6MjA1NzA1MzI4NX0.xvZpSaXmSFgvJfiJIY5t8phXRDDcMYVK3nVt0v9KkBQ';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <base href=".">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
 
-    let waitingList = [];
-    let teamRosters = {};
-    let standings = {};
-    let matches = [
-      { team1: "Portugal", team2: "Itália", score1: 0, score2: 0 },
-      { team1: "Holanda", team2: "França", score1: 2, score2: 1 },
-      { team1: "Portugal", team2: "Holanda", score1: 1, score2: 3 }
-    ];
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-    function updateStandings() {
-      standings = {};
-      matches.forEach(match => {
-        const { team1, team2, score1, score2 } = match;
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .tab.active {
+            background: #666;
+        }
+
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f5f5f5;
+        }
+
+        .admin-login {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input, button {
+            padding: 8px;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .matches {
+            display: grid;
+            gap: 20px;
+        }
+
+        .match {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            margin-bottom: 10px;
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .match-details {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .match input {
+            width: 60px;
+            text-align: center;
+        }
+
+        .cards-input {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .save-button, .reset-button {
+            width: auto;
+            padding: 5px 15px;
+            margin-top: 10px;
+        }
+
+        .reset-button {
+            background: #dc3545;
+            margin-left: 10px;
+        }
+
+        .reset-button:hover {
+            background: #c82333;
+        }
+
+        .round-section {
+            margin-bottom: 30px;
+        }
+
+        .round-section h4 {
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #333;
+        }
+
+        .save-feedback {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .statute-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .statute-button {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .statute-button:hover {
+            background: #45a049;
+        }
+
+        .download-button {
+            background: #2196F3;
+        }
+
+        .download-button:hover {
+            background: #1976D2;
+        }
+
+        .admin-statute {
+            margin: 20px 0;
+        }
+
+        .admin-statute textarea {
+            width: 100%;
+            min-height: 400px;
+            margin-bottom: 15px;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+        }
+
+        .admin-statute-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .waiting-list-admin {
+            margin: 20px 0;
+        }
+
+        .waiting-list-table {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .waiting-list-controls {
+            margin-bottom: 15px;
+        }
+
+        .waiting-list-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .waiting-list-form input {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .waiting-list-form button {
+            width: auto;
+        }
+
+        .remove-player-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .remove-player-btn:hover {
+            background: #c82333;
+        }
+
+        .waiting-list-display {
+            margin: 20px 0;
+        }
+
+        .waiting-list-display table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .waiting-list-display th,
+        .waiting-list-display td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .licenses-admin {
+            margin: 20px 0;
+        }
+
+        .licenses-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .licenses-form input,
+        .licenses-form select {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        .licenses-table {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .remove-license-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .remove-license-btn:hover {
+            background: #c82333;
+        }
+
+        .licenses-display {
+            margin: 20px 0;
+        }
+
+        .licenses-display table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .licenses-display th,
+        .licenses-display td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .match-teams {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .match-result {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .match-cards {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .admin-tab {
+            padding: 8px 16px;
+            background: #2196F3; 
+            color: white;
+            border: 1px solid #1976D2; 
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .admin-tab.active {
+            background: #f44336; 
+            color: white;
+            border-color: #d32f2f; 
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
         
-        if (score1 !== null && score1 !== undefined && 
-            score2 !== null && score2 !== undefined) {
-            
-          if (!standings[team1]) standings[team1] = { pontos: 0 };
-          if (!standings[team2]) standings[team2] = { pontos: 0 };
+        .statistics-section {
+            margin-bottom: 30px;
+        }
 
-          if (score1 === score2) {
-            standings[team1].pontos += 1;
-            standings[team2].pontos += 1;
-          } else if (score1 > score2) {
-            standings[team1].pontos += 2;
-          } else {
-            standings[team2].pontos += 2;
+        .statistics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .statistics-table th,
+        .statistics-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .statistics-table input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .statistics-table input[type="number"] {
+            width: 70px;
+        }
+        
+        .team-roster {
+            margin: 20px 0;
+        }
+
+        .team-roster h3 {
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #333;
+        }
+
+        .roster-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .roster-table th,
+        .roster-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+
+        .roster-table input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .roster-table input[type="number"] {
+            width: 70px;
+        }
+
+        .poll-form {
+            margin: 20px 0;
+        }
+
+        .poll-form select, 
+        .poll-form input {
+            padding: 8px;
+            margin: 5px;
+            width: 200px;
+        }
+
+        .poll-results {
+            margin-top: 20px;
+        }
+
+        .poll-results-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .poll-results-table th,
+        .poll-results-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .poll-controls {
+            margin: 15px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .poll-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .poll-button:hover {
+            background: #45a049;
+        }
+
+        .poll-login-form {
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .poll-login-form input {
+            margin-bottom: 10px;
+        }
+
+        .poll-results-public {
+            margin-top: 20px;
+        }
+
+        .vote-feedback {
+            color: #4CAF50;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .most-voted-player {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .most-voted-player h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .most-voted-player p {
+            font-size: 1.2em;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .password-input {
+            width: 80px !important;
+            text-align: center;
+        }
+
+        /* Democracy Tab Styles */
+        .democracy-container {
+            padding: 20px;
+        }
+
+        .democracy-section {
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .democracy-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .proposals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .proposal-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .proposal-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .proposal-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .proposal-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .proposal-status {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-approved {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .status-rejected {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .proposal-votes {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .vote-button {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+        }
+
+        .vote-yes {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .vote-no {
+            background: #f44336;
+            color: white;
+        }
+
+        .vote-button:hover {
+            opacity: 0.9;
+        }
+
+        .proposal-deadline {
+            font-style: italic;
+            color: #666;
+        }
+
+        .proposal-form {
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .proposal-form input[type="text"],
+        .proposal-form textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .proposal-form textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .proposal-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .proposal-button:hover {
+            background: #45a049;
+        }
+
+        .proposals-list-admin {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .proposal-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .proposal-controls {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .proposal-controls select {
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .remove-proposal-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .remove-proposal-btn:hover {
+            background: #d32f2f;
+        }
+
+        .proposal-results {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .vote-results {
+            margin-top: 10px;
+        }
+
+        .vote-bar {
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .vote-yes-bar {
+            background: #4CAF50;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .vote-no-bar {
+            background: #f44336;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .vote-counts {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .yes-votes {
+            color: #4CAF50;
+        }
+
+        .no-votes {
+            color: #f44336;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        let currentTab = 'classification';
+        const teams = ['Itália', 'Portugal', 'Holanda', 'Espanha'];
+        let standings = {};
+        let matches = [];
+        let players = {};
+        let votes = new Set();
+        let isVotingOpen = false;
+        let statuteContent = '';
+        let waitingList = [];
+        let licenses = [];
+        let currentAdminTab = 'matches';
+        let topScorers = {
+          'Itália': {
+            name: '',
+            goals: 0
+          },
+          'Portugal': {
+            name: '',
+            goals: 0
+          },
+          'Holanda': {
+            name: '',
+            goals: 0
+          },
+          'Espanha': {
+            name: '',
+            goals: 0
+          }
+        };
+        let teamRosters = {
+          'Itália': Array(20).fill().map(() => ({
+            name: '',
+            number: '',
+            password: '',
+            position: ''
+          })),
+          'Portugal': Array(20).fill().map(() => ({
+            name: '',
+            number: '',
+            password: '',
+            position: ''
+          })),
+          'Holanda': Array(20).fill().map(() => ({
+            name: '',
+            number: '',
+            password: '',
+            position: ''
+          })),
+          'Espanha': Array(20).fill().map(() => ({
+            name: '',
+            number: '',
+            password: '',
+            position: ''
+          }))
+        };
+        let pollVotes = [];
+        let isVotingEnabled = true;
+        let hasVoted = new Set();
+        let proposals = [];
+        let democracyVotes = {};
+
+        function initializeTeams() {
+          teams.forEach(team => {
+            standings[team] = {
+              points: 0,
+              games: 0,
+              wins: 0,
+              draws: 0,
+              losses: 0,
+              redCards: 0,
+              yellowCards: 0,
+              goalsFor: 0,
+              goalsAgainst: 0
+            };
+            players[team] = Array(20).fill('');
+          });
+        }
+        function generateMatches() {
+          matches = [];
+          let currentDate = new Date();
+          currentDate.setDate(currentDate.getDate() + (7 - currentDate.getDay()));
+          matches.push({
+            round: 1,
+            team1: "Espanha",
+            team2: "Portugal",
+            score1: 0,
+            score2: 0,
+            yellowCards1: 0,
+            yellowCards2: 0,
+            redCards1: 0,
+            redCards2: 0,
+            date: currentDate.toISOString().split('T')[0],
+            time: "08:10"
+          }, {
+            round: 1,
+            team1: "Holanda",
+            team2: "Itália",
+            score1: 2,
+            score2: 1,
+            yellowCards1: 0,
+            yellowCards2: 0,
+            redCards1: 0,
+            redCards2: 0,
+            date: currentDate.toISOString().split('T')[0],
+            time: "09:10"
+          });
+          currentDate.setDate(currentDate.getDate() + 7);
+          matches.push({
+            round: 2,
+            team1: "Espanha",
+            team2: "Itália",
+            score1: null,
+            score2: null,
+            yellowCards1: 0,
+            yellowCards2: 0,
+            redCards1: 0,
+            redCards2: 0,
+            date: currentDate.toISOString().split('T')[0],
+            time: "08:10"
+          }, {
+            round: 2,
+            team1: "Portugal",
+            team2: "Holanda",
+            score1: 1,
+            score2: 3,
+            yellowCards1: 0,
+            yellowCards2: 0,
+            redCards1: 0,
+            redCards2: 0,
+            date: currentDate.toISOString().split('T')[0],
+            time: "09:10"
+          });
+          currentDate.setDate(currentDate.getDate() + 7);
+          matches.push({
+            round: 3,
+            team1: "Espanha",
+            team2: "Holanda",
+            score1: null,
+            score2: null,
+            yellowCards1: 0,
+            yellowCards2: 0,
+            redCards1: 0,
+            redCards2: 0,
+            date: currentDate.toISOString().split('T')[0],
+            time: "08:10"
+          }, {
+            round: 3,
+            team1: "Itália",
+            team2: "Portugal",
+            score1: null,
+            score2: null,
+            yellowCards1: 0,
+            yellowCards2: 0,
+            redCards1: 0,
+            redCards2: 0,
+            date: currentDate.toISOString().split('T')[0],
+            time: "09:10"
+          });
+          currentDate.setDate(currentDate.getDate() + 7);
+          const firstTurnMatches = [...matches];
+          firstTurnMatches.forEach(match => {
+            currentDate.setDate(currentDate.getDate() + 7);
+            matches.push({
+              round: match.round + 3,
+              team1: match.team2,
+              team2: match.team1,
+              score1: null,
+              score2: null,
+              yellowCards1: 0,
+              yellowCards2: 0,
+              redCards1: 0,
+              redCards2: 0,
+              date: currentDate.toISOString().split('T')[0],
+              time: match.time
+            });
+          });
+        }
+        function showTab(tabName) {
+          currentTab = tabName;
+          document.querySelectorAll('.tab-content').forEach(content => {
+            content.style.display = 'none';
+          });
+          document.getElementById(tabName).style.display = 'block';
+          if (tabName === 'admin') {
+            displayAdminMatches();
+          }
+          if (tabName === 'matches') {
+            displayMatches();
+          }
+          if (tabName === 'waiting-list') {
+            displayPublicWaitingList();
+          }
+          if (tabName === 'licenses') {
+            displayPublicLicenses();
+          }
+          if (tabName === 'poll') {
+            displayPublicPoll();
+          }
+          if (tabName === 'democracy') {
+            displayDemocracy();
+          }
+          if (tabName === 'teams') {
+            displayPublicTeamRosters();
           }
         }
-      });
-      updateStandingsTable();
-    }
-
-    function updateStandingsTable() {
-      const tbody = document.getElementById('standings-tbody');
-      const sorted = Object.entries(standings)
-        .sort((a, b) => b[1].pontos - a[1].pontos || a[0].localeCompare(b[0]));
-      
-      tbody.innerHTML = sorted.map(([team, info]) => `
-        <tr>
-          <td>${team}</td>
-          <td>${info.pontos}</td>
-        </tr>
-      `).join('');
-    }
-
-    async function addToWaitingList() {
-      const nameInput = document.getElementById('new-player-name');
-      const name = nameInput.value.trim();
-      if (!name) return;
-
-      const { error } = await supabase.from('lista_espera').insert([{ nome: name }]);
-      if (error) {
-        alert('Erro ao adicionar: ' + error.message);
-        return;
-      }
-
-      nameInput.value = '';
-      await loadWaitingList();
-      showSaveFeedback();
-    }
-
-    async function removeFromWaitingList(id) {
-      const { error } = await supabase.from('lista_espera').delete().eq('id', id);
-      if (error) {
-        alert('Erro ao remover: ' + error.message);
-        return;
-      }
-      await loadWaitingList();
-      showSaveFeedback();
-    }
-
-    async function loadWaitingList() {
-      const { data, error } = await supabase.from('lista_espera').select('*');
-      if (error) {
-        alert('Erro ao carregar lista: ' + error.message);
-        return;
-      }
-      waitingList = data;
-      updateWaitingListTable();
-    }
-
-    function updateWaitingListTable() {
-      const tbody = document.getElementById('waiting-list-tbody');
-      if (!tbody) return;
-      tbody.innerHTML = waitingList.map(player => `
-        <tr>
-          <td>${player.nome}</td>
-          <td><button onclick="removeFromWaitingList(${player.id})">Remover</button></td>
-        </tr>
-      `).join('');
-    }
-
-    async function loadTeamRosters() {
-      const { data, error } = await supabase.from('times').select('*');
-      if (error) {
-        alert('Erro ao carregar os times: ' + error.message);
-        return;
-      }
-
-      teamRosters = {};
-      data.forEach(jogador => {
-        if (!teamRosters[jogador.time]) teamRosters[jogador.time] = [];
-        teamRosters[jogador.time].push(jogador);
-      });
-
-      updateTeamTabs();
-    }
-
-    function updateTeamTabs() {
-      const container = document.getElementById('teams-section');
-      container.innerHTML = '';
-      Object.keys(teamRosters).forEach(time => {
-        const div = document.createElement('div');
-        div.innerHTML = `<h3>${time}</h3>
-        <table border="1" cellpadding="5">
-          <thead>
-            <tr><th>Número</th><th>Nome</th><th>Posição</th></tr>
-          </thead>
-          <tbody>
-            ${teamRosters[time].map(j => `<tr><td>${j.numero}</td><td>${j.nome}</td><td>${j.posicao}</td></tr>`).join('')}
-          </tbody>
-        </table>`;
-        container.appendChild(div);
-      });
-    }
-
-    function showSaveFeedback() {
-      const feedback = document.createElement('div');
-      feedback.className = 'feedback';
-      feedback.textContent = 'Alterações salvas com sucesso!';
-      document.body.appendChild(feedback);
-      setTimeout(() => feedback.remove(), 2000);
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      loadWaitingList();
-      loadTeamRosters();
-      updateStandings();
-    });
-  </script>
-</head>
-<body>
-  <h1>Sistema de Torneio</h1>
-  
-  <h2>Lista de Espera</h2>
-  <div>
-    <input type="text" id="new-player-name" placeholder="Nome do atleta">
-    <button onclick="addToWaitingList()">Adicionar</button>
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="waiting-list-tbody"></tbody>
-  </table>
-
-  <hr>
-  <h2>Times</h2>
-  <div id="teams-section"></div>
-
-  <hr>
-  <h2>Classificação</h2>
-  <table>
-    <thead>
-      <tr><th>Time</th><th>Pontos</th></tr>
-    </thead>
-    <tbody id="standings-tbody"></tbody>
-  </table>
-</body>
-</html>
+        function adminLogin() {
+          const password = document.getElementById('admin-password').value;
+          if (password === 'Gremio@') {
+            document.getElementById('admin-content').style.display = 'block';
+            document.getElementById('admin-login-form').style.display = 'none';
+            displayAdminMatches();
+          } else {
+            alert('Senha incorreta!');
+          }
+        }
+        function displayAdminMatches() {
+          const adminContent = document.getElementById('admin-content');
+          adminContent.innerHTML = `
+                    <div class="admin-tabs">
+                        <button class="admin-tab active" data-tab="matches" onclick="showAdminTab('matches')">Confrontos</button>
+                        <button class="admin-tab" data-tab="waitinglist" onclick="showAdminTab('waitinglist')">Lista de Espera</button>
+                        <button class="admin-tab" data-tab="licenses" onclick="showAdminTab('licenses')">Licenças</button>
+                        <button class="admin-tab" data-tab="statute" onclick="showAdminTab('statute')">Estatuto</button>
+                        <button class="admin-tab" data-tab="statistics" onclick="showAdminTab('statistics')">Estatísticas</button>
+                        <button class="admin-tab" data-tab="poll" onclick="showAdminTab('poll')">Melhor Jogador</button>
+                        <button class="admin-tab" data-tab="teams" onclick="showAdminTab('teams')">Times</button>
+                        <button class="admin-tab" data-tab="democracy" onclick="showAdminTab('democracy')">Democracia</button>
+                    </div>
+                    <div id="admin-matches" class="admin-section active">
+                        <h3>Gestão de Confrontos</h3>
+                        <div>
+                            <button class="reset-button" onclick="resetChampionship()">Reiniciar Campeonato</button>
+                        </div>
+                        <div class="waiting-list-admin">
+                            <h3>Lista de Espera</h3>
+                            <div class="waiting-list-controls">
+                                <div class="waiting-list-form">
+                                    <input type="text" id="new-player-name" placeholder="Nome do atleta">
+                                    <button onclick="addToWaitingList()">Adicionar Atleta</button>
+                                </div>
+                            </div>
+                            <table class="waiting-list-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="waiting-list-tbody">
+                                    ${waitingList.map((player, index) => `
+                                        <tr>
+                                            <td>${player}</td>
+                                            <td>
+                                                <button class="remove-player-btn" onclick="removeFromWaitingList(${index})">Remover</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="licenses-admin">
+                            <h3>Licenças</h3>
+                            <div class="licenses-form">
+                                <input type="text" id="license-player-name" placeholder="Nome do atleta">
+                                <select id="license-team">
+                                    ${teams.map(team => `<option value="${team}">${team}</option>`).join('')}
+                                </select>
+                                <input type="date" id="license-start-date">
+                                <input type="date" id="license-end-date">
+                                <button onclick="addLicense()">Adicionar Licença</button>
+                            </div>
+                            <table class="licenses-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Time</th>
+                                        <th>Início</th>
+                                        <th>Fim</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="licenses-tbody">
+                                    ${licenses.map((license, index) => `
+                                        <tr>
+                                            <td>${license.name}</td>
+                                            <td>${license.team}</td>
+                                            <td>${license.startDate}</td>
+                                            <td>${license.endDate}</td>
+                                            <td>
+                                                <button class="remove-license-btn" onclick="removeLicense(${index})">Remover</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="admin-statute">
+                            <h3>Gestão do Estatuto</h3>
+                            <textarea id="admin-statute-text" placeholder="Digite o estatuto aqui...">${statuteContent}</textarea>
+                            <div class="admin-statute-controls">
+                                <button class="statute-button" onclick="saveAdminStatute()">Salvar Estatuto</button>
+                                <button class="statute-button download-button" onclick="downloadAdminStatute()">Baixar PDF</button>
+                            </div>
+                        </div>
+                        <div class="matches-admin">
+                            <h3>Confrontos</h3>
+                            <div class="matches-controls">
+                                <div class="matches-form">
+                                    
+                                </div>
+                            </div>
+                            <div class="matches-table">
+                                <div id="matches-container">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="admin-waitinglist" class="admin-section">
+                        <div class="waiting-list-admin">
+                            <h3>Lista de Espera</h3>
+                            <div class="waiting-list-controls">
+                                <div class="waiting-list-form">
+                                    <input type="text" id="new-player-name-wl" placeholder="Nome do atleta">
+                                    <button onclick="addToWaitingList()">Adicionar Atleta</button>
+                                </div>
+                            </div>
+                            <table class="waiting-list-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="waiting-list-tbody-wl">
+                                    ${waitingList.map((player, index) => `
+                                        <tr>
+                                            <td>${player}</td>
+                                            <td>
+                                                <button class="remove-player-btn" onclick="removeFromWaitingList(${index})">Remover</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="admin-licenses" class="admin-section">
+                        <div class="licenses-admin">
+                            <h3>Licenças</h3>
+                            <div class="licenses-form">
+                                <input type="text" id="license-player-name-l" placeholder="Nome do atleta">
+                                <select id="license-team-l">
+                                    ${teams.map(team => `<option value="${team}">${team}</option>`).join('')}
+                                </select>
+                                <input type="date" id="license-start-date-l">
+                                <input type="date" id="license-end-date-l">
+                                <button onclick="addLicense()">Adicionar Licença</button>
+                            </div>
+                            <table class="licenses-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Time</th>
+                                        <th>Início</th>
+                                        <th>Fim</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="licenses-tbody-l">
+                                    ${licenses.map((license, index) => `
+                                        <tr>
+                                            <td>${license.name}</td>
+                                            <td>${license.team}</td>
+                                            <td>${license.startDate}</td>
+                                            <td>${license.endDate}</td>
+                                            <td>
+                                                <button class="remove-license-btn" onclick="removeLicense(${index})">Remover</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="admin-statute" class="admin-section">
+                        <div class="admin-statute">
+                            <h3>Gestão do Estatuto</h3>
+                            <textarea id="admin-statute-text-s" placeholder="Digite o estatuto aqui...">${statuteContent}</textarea>
+                            <div class="admin-statute-controls">
+                                <button class="statute-button" onclick="saveAdminStatute()">Salvar Estatuto</button>
+                                <button class="statute-button download-button" onclick="downloadAdminStatute()">Baixar PDF</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="admin-statistics" class="admin-section">
+                        <h3>Estatísticas</h3>
+                        <div class="statistics-admin">
+                            <!-- Statistics content will go here -->
+                        </div>
+                    </div>
+                    <div id="admin-poll" class="admin-section">
+                        <h3>Melhor Jogador</h3>
+                        <div class="poll-admin">
+                            <!-- Poll content will go here -->
+                        </div>
+                    </div>
+                    <div id="admin-teams" class="admin-section">
+                        <h3>Times</h3>
+                        <div class="teams-admin">
+                            <!-- Teams content will go here -->
+                        </div>
+                    </div>
+                    <div id="admin-democracy" class="admin-section">
+                        <h3>Gestão da Democracia</h3>
+                        <div class="democracy-admin">
+                            <div class="proposal-form">
+                                <h4>Nova Proposta</h4>
+                                <input type="text" id="proposal-title" placeholder="Título da proposta">
+                                <textarea id="proposal-description" placeholder="Descrição da proposta"></textarea>
+                                <input type="date" id="proposal-deadline">
+                                <button class="proposal-button" onclick="addProposal()">Adicionar Proposta</button>
+                            </div>
+                            
+                            <div class="proposals-management">
+                                <h4>Gerenciar Propostas</h4>
+                                <div class="proposals-list-admin">
+                                    ${proposals.map((proposal, index) => `
+                                        <div class="proposal-card">
+                                            <div class="proposal-title">${proposal.title}</div>
+                                            <div class="proposal-description">${proposal.description}</div>
+                                            <div class="proposal-meta">
+                                                <span>Data: ${proposal.date}</span>
+                                                <span>Prazo: ${proposal.deadline}</span>
+                                                <span class="proposal-status status-${proposal.status}">${proposal.status.toUpperCase()}</span>
+                                            </div>
+                                            <div class="proposal-controls">
+                                                <select onchange="updateProposalStatus(${index}, this.value)">
+                                                    <option value="active" ${proposal.status === 'active' ? 'selected' : ''}>Ativa</option>
+                                                    <option value="ended" ${proposal.status === 'ended' ? 'selected' : ''}>Encerrar Votação</option>
+                                                    <option value="approved" ${proposal.status === 'approved' ? 'selected' : ''}>Aprovada</option>
+                                                    <option value="rejected" ${proposal.status === 'rejected' ? 'selected' : ''}>Rejeitada</option>
+                                                </select>
+                                                <button class="remove-proposal-btn" onclick="removeProposal(${index})">Remover</button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+          `;
+          const matchesByRound = {};
+          matches.forEach(match => {
+            if (!matchesByRound[match.round]) {
+              matchesByRound[match.round] = [];
+            }
+            matchesByRound[match.round].push(match);
+          });
+          Object.keys(matchesByRound).forEach(round => {
+            const roundDiv = document.createElement('div');
+            roundDiv.className = 'round-section';
+            roundDiv.innerHTML = `<h4>Rodada ${round}</h4>`;
+            matchesByRound[round].forEach((match, index) => {
+              const matchDiv = document.createElement('div');
+              matchDiv.className = 'match';
+              matchDiv.innerHTML = `
+                                <div class="match-header">
+                                    <input type="date" value="${match.date}" onchange="updateMatchDate(${matches.indexOf(match)}, this.value)">
+                                    <input type="time" value="${match.time}" onchange="updateMatchTime(${matches.indexOf(match)}, this.value)">
+                                </div>
+                                <div class="match-details">
+                                    <div>
+                                        ${match.team1}
+                                        <input type="number" min="0" value="${match.score1 !== null ? match.score1 : ''}" onchange="updateScore(${matches.indexOf(match)}, 'score1', this.value)">
+                                        <div class="cards-input">
+                                            <div>
+                                                CA: <input type="number
